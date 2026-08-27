@@ -42,6 +42,9 @@ export default function DevenirProfPage() {
   const [longitude, setLongitude] = useState<number>(6.16);
   const [rayonKm, setRayonKm] = useState<number>(15);
 
+  // EX-001 : extrait vidéo 30 s — lien direct lisible par un <video> (fichier .mp4/.webm/.mov)
+  const [video30sUrl, setVideo30sUrl] = useState('');
+
   // Prestations (2 types de cours KALA : à domicile / chez le prof)
   const [domicilePrix, setDomicilePrix] = useState<number | null>(null);
   const [visitePrix, setVisitePrix] = useState<number | null>(null);
@@ -99,6 +102,7 @@ export default function DevenirProfPage() {
         setLatitude(prest.latitude || 46.85);
         setLongitude(prest.longitude || 6.16);
         setRayonKm(prest.rayon_km || 15);
+        setVideo30sUrl(prest.video_30s_url || '');
         setStripeAccountId(prest.stripe_account_id || null);
         setPayoutsActifs(prest.payouts_actifs || false);
         const refVerif = lireReferenceVerif(prest);
@@ -161,6 +165,23 @@ export default function DevenirProfPage() {
       return;
     }
 
+    // EX-001 : vidéo 30 s obligatoire sur le profil — un lien de page (YouTube…) ne se lit
+    // pas dans un <video>, on exige une adresse http(s) complète (fichier direct).
+    const lienVideo = video30sUrl.trim();
+    let urlVideo: URL | null = null;
+    if (lienVideo) {
+      try {
+        urlVideo = new URL(lienVideo);
+      } catch {
+        urlVideo = null;
+      }
+    }
+    if (!urlVideo || (urlVideo.protocol !== 'https:' && urlVideo.protocol !== 'http:')) {
+      setError('Le lien de votre vidéo de 30 secondes est obligatoire : collez l\'adresse complète du fichier vidéo (commençant par https://).');
+      setSaving(false);
+      return;
+    }
+
     try {
       let prestataireId = prestataireExistant?.id;
 
@@ -177,6 +198,7 @@ export default function DevenirProfPage() {
             latitude,
             longitude,
             rayon_km: rayonKm,
+            video_30s_url: lienVideo,
             ...champsReferenceVerif({ reference: referenceVerif.trim(), dateDelivrance: dateVerif }),
           })
           .eq('app_id', APP_ID)
@@ -200,6 +222,7 @@ export default function DevenirProfPage() {
           latitude,
           longitude,
           rayon_km: rayonKm,
+          video_30s_url: lienVideo,
           statut_verification: 'brouillon' as const,
           adresse_exacte: null,
           badge_verifie: false,
@@ -307,6 +330,14 @@ export default function DevenirProfPage() {
     const refExistante = lireReferenceVerif(prestataireExistant);
     if (!refExistante.reference || !refExistante.dateDelivrance) {
       setError('La référence de votre justificatif et sa date d\'obtention sont obligatoires avant de soumettre votre profil à vérification. Sauvegardez-les d\'abord.');
+      return;
+    }
+
+    // EX-001 : publication bloquée sans vidéo 30 s — lu sur la ligne persistée (rafraîchie
+    // après chaque sauvegarde), pas sur l'état local du champ. Double filet avec le CHECK DB
+    // (migration 0008 : statut 'verifie' ⇒ video_30s_url non vide).
+    if (!prestataireExistant.video_30s_url) {
+      setError('Votre vidéo de 30 secondes est obligatoire avant publication : renseignez son lien puis sauvegardez votre profil.');
       return;
     }
 
@@ -479,6 +510,28 @@ export default function DevenirProfPage() {
             className="w-full rounded-lg border border-[color:var(--border-control)] bg-background-soft px-4 py-2 text-foreground placeholder:text-foreground-muted focus:outline-none focus:ring-2 focus:ring-primary"
             required
           />
+        </div>
+
+        {/* EX-001 : extrait vidéo 30 s — la signature KALA. Les élèves choisissent un prof en
+            l'entendant jouer (FormeOnde30s sur la fiche), pas sur une photo : la vidéo est
+            donc obligatoire et la publication est bloquée sans elle (ci-dessus + CHECK DB).
+            Pleine largeur comme Présentation (borne 12/12), S42-g py-2.5 comme les 7 champs. */}
+        <div>
+          <label htmlFor="video30sUrl" className="mb-1 block text-sm font-medium">
+            Lien de votre vidéo de 30 secondes <span className="text-alerte">*</span>
+          </label>
+          <input
+            id="video30sUrl"
+            type="url"
+            value={video30sUrl}
+            onChange={(e) => setVideo30sUrl(e.target.value)}
+            placeholder="https://… (votre-video-30s.mp4)"
+            className="w-full rounded-lg border border-[color:var(--border-control)] bg-background-soft px-4 py-2.5 text-foreground placeholder:text-foreground-muted focus:outline-none focus:ring-2 focus:ring-primary"
+            required
+          />
+          <p className="mt-1 text-xs text-muted-foreground">
+            Un extrait de 30 secondes où l&apos;on vous entend jouer — c&apos;est ce que les élèves écoutent pour vous choisir. Adresse complète du fichier vidéo hébergé (lien direct .mp4, pas une page YouTube ou Vimeo).
+          </p>
         </div>
 
         {/* Commune + code postal + rayon — Commune occupe 8/12 (même borne que Titre,
