@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Silhouette d'oiseau">
+  <circle cx="32" cy="32" r="31" fill="#14141C" stroke="#8fb47f" stroke-width="1"/>
+  <g stroke="#8fb47f" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <path d="M18 38 Q18 26 30 24 Q40 22 46 28 Q42 30 38 29 Q42 33 40 38 Q36 40 32 37 Q26 42 19 40 Z"/>
+    <path d="M46 28 L52 26 L47 31 Z" fill="#8fb47f" stroke="none"/>
+    <circle cx="35" cy="27" r="1.3" fill="#8fb47f" stroke="none"/>
+    <path d="M24 40 L22 45 M30 41 L29 46"/>
+  </g>
+</svg>

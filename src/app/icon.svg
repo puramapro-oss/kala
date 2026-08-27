@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- KALA : forme d'onde 30s — signature de l'app (identitySeed). -->
+  <rect width="64" height="64" rx="14" fill="#1C1F26" />
+  <rect x="7.5" y="27" width="5" height="10" rx="2.5" fill="#C9A227" />
+  <rect x="15.5" y="22" width="5" height="20" rx="2.5" fill="#C9A227" />
+  <rect x="23.5" y="16" width="5" height="32" rx="2.5" fill="#C9A227" />
+  <rect x="31.5" y="11" width="5" height="42" rx="2.5" fill="#E5484D" />
+  <rect x="39.5" y="16" width="5" height="32" rx="2.5" fill="#C9A227" />
+  <rect x="47.5" y="22" width="5" height="20" rx="2.5" fill="#C9A227" />
+  <rect x="55.5" y="27" width="5" height="10" rx="2.5" fill="#C9A227" />
+</svg>

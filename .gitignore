@@ -1,0 +1,62 @@
+# T-02 — gitignore AVANT 1er commit (CLAUDE.md §13 erreur 17)
+
+# Next.js
+/.next/
+/out/
+*.tsbuildinfo
+next-env.d.ts
+
+# Dependencies
+/node_modules
+
+# ENV vars
+.env*.local
+.env.secrets
+
+# Testing / Playwright
+/test-results/
+/playwright-report/
+/playwright/.cache/
+
+# Build output
+/dist
+/build
+
+# IDE
+.vscode/*
+!.vscode/settings.json
+.idea
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Vercel
+.vercel
+
+# Claude Code sessions — JAMAIS commiter (incident 2026-07-25, PIEGES.md §6)
+CLAUDE*.md
+*-BRIEF.md
+task_plan.md
+progress.md
+handoff.md
+.claude/session_state.md
+.claude/settings.local.json
+
+# SPEC/DESIGN/DECISIONS — restent au niveau purama/, pas dans les repos dédiés
+SPEC.md
+DESIGN-PLAN.md
+DESIGN-SCORE.md
+DECISIONS.md
+CONFORMITE.md
+CERTIFIED.md
+ERRORS.md
+PATTERNS.md
+PIEGES.md
+PROOF-*.md
+
+# Capacitor mobile (régénérés en CI depuis capacitor.config.ts + resources/)
+/ios
+/android

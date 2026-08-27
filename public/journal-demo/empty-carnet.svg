@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="143.48" height="148.37" viewBox="28.26 34.57 143.48 148.37" role="img" aria-label="Illustration : un carnet vierge">
+  <!-- B41-8 (passage 41) : état vide illustré de /gains — carnet vierge (les gains d'un prof
+       s'écrivent cours après cours, comme les pages d'un carnet).
+       B43-9 (passage 43) : viewBox d'origine "0 0 200 200" n'était pas centré sur le dessin réel
+       (boîte d'encre mesurée : x [34,166] largeur 132, y [40.5,177] hauteur 136.5 -- élément
+       stroke-width=3 inclus) -- marges asymétriques 16.9%/16.9%/20.1%/11.5% (gauche/droite/
+       haut/bas), le dessin flottait visuellement trop haut. Recadré sur la boîte d'encre + marge
+       symétrique 4% par axe (contenu inchangé, seul le cadrage bouge) : x0=28.26 (34-5.74),
+       y0=34.57 (40.5-5.93), largeur=143.48 (132/0.92), hauteur=148.37 (136.5/0.92).
+       `width`/`height` explicites ajoutés (= dimensions du viewBox) : sans eux, <img> ne peut pas
+       dériver de ratio intrinsèque du seul viewBox (mesuré naturalWidth/Height=0 via Playwright,
+       hauteur rendue collapsée à 0px avec `w-40` seul côté CSS) -- avec l'attribut, le ratio est
+       fiable et une largeur CSS seule (`w-40`) suffit à obtenir la hauteur proportionnelle. -->
+  <ellipse cx="100" cy="168" rx="66" ry="9" fill="#0A0A0F" opacity="0.4"/>
+  <g stroke="#8fb47f" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <rect x="52" y="42" width="96" height="120" rx="6" fill="#14141C"/>
+    <path d="M76 42 V162" opacity="0.6"/>
+    <path d="M96 70 H128 M96 90 H128 M96 110 H108"/>
+  </g>
+  <circle cx="64" cy="52" r="3" fill="#c9a876"/>
+</svg>

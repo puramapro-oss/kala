@@ -1,0 +1,334 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* B20-5 : sans color-scheme, l'agent utilisateur reste en mode clair sur une app exclusivement
+     sombre — barre de défilement, remplissage auto de formulaire, curseur de saisie et contrôles
+     natifs blancs. Seul endroit du produit où une surface blanche pouvait apparaître sans que le
+     code ne l'ait demandé. */
+  color-scheme: dark;
+
+  /* Background / foreground */
+  --background: #0a0a0f;
+  --background-soft: #14141c;
+  --foreground: #f5f5fa;
+  --foreground-muted: rgba(245, 245, 250, 0.78);
+  --foreground-secondary: rgba(245, 245, 250, 0.55);
+
+  /* KALA identity_seed override */
+  --primary: #4a6741; /* mousse (fond boutons) */
+  --primary-on-dark: #8fb47f; /* mousse éclaircie pour texte/bordure sur fond sombre (contraste AA) */
+  --secondary: #8b6f47; /* terre */
+  /* B24-3 (passage 24) : terre brute mesure ~4,2:1 sur le fond — au-dessus du seuil non-textuel 3:1
+     (bordures, anneaux, remplissages d'icône) mais SOUS le seuil texte normal AA 4,5:1. Même geste
+     que --primary-on-dark : une variante éclaircie dédiée au texte/bordure de contraste, jamais la
+     valeur brute --secondary pour du texte. Mesuré ~8,8:1 sur rgb(10,10,15). */
+  --secondary-on-dark: #c9a876; /* terre éclaircie pour texte/bordure sur fond sombre (contraste AA) */
+  --accent-light: #f5f0e6; /* creme */
+  --accent-dark: #1c1b18; /* corbeau */
+
+  /* Triplets RGB (sans fonction couleur) — requis par Tailwind pour générer les utilitaires
+     d'opacité (`bg-primary/10`, etc.) sur une couleur pilotée par var() : Tailwind ne peut pas
+     lire la valeur d'une CSS custom property au moment du build, donc `bg-x/NN` sur un token
+     mappé en `var(--x)` compile en `rgb(var(--x) / .NN)` — invalide si --x est un hex/rgba,
+     silencieusement ignoré par le navigateur (B18-9 : trouvé via l'input code postal, blanc
+     UA par défaut faute de background-color valide). Les hex ci-dessus restent la source de
+     vérité pour tout usage direct `var(--x)` hors Tailwind (fill SVG, color-mix, etc.).
+     Ne pas dupliquer pour --foreground-muted (déjà semi-transparent par défaut, 22 usages nus
+     comptent sur cette alpha 0.78 — un token opacity-aware casserait ces usages existants). */
+  --background-rgb: 10 10 15;
+  --background-soft-rgb: 20 20 28;
+  --primary-rgb: 74 103 65;
+  --primary-on-dark-rgb: 143 180 127;
+  --secondary-rgb: 139 111 71;
+  --secondary-on-dark-rgb: 201 168 118;
+  --accent-light-rgb: 245 240 230;
+
+  /* Sémantique erreur — distincte de l'action, alignée sur alerte (identity_seed) (B14-6) */
+  --alert: #d97757;
+
+  /* Couleurs signature héros (dégradé vert franc) */
+  /* --hero-gradient-start assombri #31503a→#1a2c1f (B26-9, passage 26) : la forme d'onde
+     (`--secondary`, terre) mesurait 1,85:1 contre ce point le plus clair du dégradé (radial
+     25%/15%, seul point où le franc dégradé se rapproche du blanc) — sous 3:1 partout ailleurs
+     sur l'aire de l'illustration. #1a2c1f calculé pour donner exactement ≥3:1 contre la terre
+     (mesuré 3,13:1), sans changer le hue ni la forme radiale du dégradé, seulement sa clarté
+     maximale. */
+  --hero-gradient-start: #1a2c1f;
+  --hero-gradient-mid: #1b2a20;
+  --hero-gradient-end: #101713;
+
+  /* UI tokens sémantiques */
+  --card: rgba(255, 255, 255, 0.05);
+  /* B38-21 (passage 38, MAJEUR) : le produit portait 5 forces de bordure distinctes pour le même
+     objet « carte » (0,16/1,65:1 ici, plus 3 teintes d'accent locales à 1,15-2,27:1) — dont une
+     imperceptible. Unifié à DEUX niveaux seulement : `--border` (255,255,255,0.34 → 3,02:1,
+     recalculé composition-alpha-puis-luminance WCAG) pour TOUTE carte, décorative ou non ;
+     `--border-control` (ci-dessous) pour tout contrôle. Les cartes à accent sémantique (succès,
+     alerte) gardent leur teinte mais passent par la variante « -on-dark » déjà conçue pour porter
+     du contraste (jamais la couleur `--primary`/`--alert` brute, insuffisante en dessous de pleine
+     opacité — vérifié : `--primary-on-dark` à 60% d'alpha composite à 3,65:1, quand `--primary` à
+     20% ne dépasse pas 1,15:1, l'écart de luminance brute entre les deux teintes ne se comprime
+     pas linéairement avec l'alpha). */
+  --border: rgba(255, 255, 255, 0.34);
+  /* B36-1 (passage 36) : 0,34 mesurait en réalité 2,88:1 (sous le seuil) — corrigé à 0,38, premier
+     palier qui tient partout : 3,25:1 contre --background (rgb(10,10,15)), 3,37:1 sur une carte
+     `glass`, 3,39:1 sur --background-soft. Dédié aux contrôles identifiés par la DA (segments
+     Domicile/Chez le prof, case à cocher, pastille « Mon espace »/« Se connecter », bouton
+     « Se déconnecter », champs de formulaire /devenir-prof, boutons /timeline). */
+  --border-control: rgba(245, 245, 250, 0.38);
+
+  /* GOD MODE V3 glass */
+  --glass-bg: rgba(255, 255, 255, 0.07);
+  /* B24-6 (passage 24) : 0,1 mesurait 1,29:1 contre rgb(10,10,15) — sous le seuil non-textuel AA
+     1.4.11 (3:1), invisible à `axe-core` qui ne teste que le texte. `.glass` habille TOUTE carte
+     cliquable du produit (profs, connexion, tarifs) ; 0,34 mesure 3,04:1, et le bénéfice — la page
+     cesse de paraître vide — profite à Espacement et Émotion en même temps qu'à Contraste. */
+  --glass-border: rgba(255, 255, 255, 0.34);
+  --glass-blur: 20px;
+
+  /* Radii */
+  --radius-sm: 0.5rem;
+  --radius-md: 1rem;
+  --radius-lg: 1.5rem;
+  --radius-xl: 2rem;
+  --radius-pill: 9999rem;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  min-height: 100vh;
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
+    'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at top center, color-mix(in srgb, var(--primary) 8%, transparent), transparent 80%),
+    radial-gradient(
+      circle at bottom right,
+      color-mix(in srgb, var(--secondary) 6%, transparent),
+      transparent 80%
+    );
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* letter-spacing + line-height ajoutés à la règle globale (B26-6, passage 26) : cette règle ne
+   couvrait que famille/graisse — l'interlettrage et l'interligne étaient posés `tracking-tight`/
+   `leading-[…]` élément par élément, jamais palier par palier. Résultat mesuré : à corps et graisse
+   identiques (36px et 30px, w700 Fraunces), certains h1 avaient `tracking-tight` et leurs frères sur
+   d'autres pages non — h1 accueil vs h1 pages légales, h1 fiche vs h1 login/signup. Une valeur par
+   défaut ici (héritée par TOUT titre, remplaçable par une classe plus spécifique si un cas l'exige
+   vraiment) ferme la source du défaut au lieu du symptôme sur chaque page une par une. */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-fraunces), serif;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+}
+
+/* Rôles typographiques KALA (DESIGN-PLAN §1) */
+/* B38-17 (passage 38, MAJEUR) : letter-spacing/line-height n'étaient posés que sur h1..h6 (ligne
+   ~141) — tout usage de Fraunces sur un span/p/div (avatar "M", compteur, montant) héritait de la
+   famille mais échappait au tracking, rendant selon la balise deux rendus différents au même corps
+   (18px/-0.45px vs 18px/normal). Dupliqué ici, jamais divergent des valeurs h1..h6. */
+.font-display {
+  font-family: var(--font-fraunces), serif;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+}
+
+.font-body {
+  font-family: var(--font-inter), sans-serif;
+}
+
+.font-mono {
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-variant-numeric: tabular-nums; /* alignement chiffres */
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* B39-10 (passage 39, MOYEN) : 5 traitements de lien coexistaient (vert souligné, terre souligné,
+   blanc 78% souligné, vert non souligné, blanc 78% non souligné) — deux voisins dans la même carte
+   `/dashboard` pour la même nature d'action. Recette DA : deux rôles, pas cinq. `--secondary-on-dark`
+   (terre) cesse d'être une couleur de lien — accent décoratif uniquement (avatars/badges) à partir
+   de maintenant. */
+.link-action {
+  color: var(--primary-on-dark);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.link-nav {
+  color: var(--foreground-muted);
+  text-decoration: none;
+}
+.link-nav:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+:focus-visible {
+  outline: 2px solid var(--primary-on-dark);
+  outline-offset: 3px;
+  /* B19-3 : pas de border-radius ici — `inherit` prend le rayon du PARENT, pas celui de l'élément
+     focalisé (une pilule dans un conteneur à angle vif devenait un rectangle au focus). Les moteurs
+     à jour font déjà suivre l'outline au border-radius propre de l'élément, sans cette ligne. */
+}
+
+/* ::selection (B28-13, passage 28) : sans règle explicite, la sélection de texte retombe sur le bleu
+   système par défaut du navigateur — seule surface interactive de l'app à ne jamais porter la teinte
+   mousse. Même token que l'anneau de focus (--primary-on-dark), opacité réduite pour rester lisible
+   sous du texte foncé ET clair. */
+::selection {
+  background: color-mix(in srgb, var(--primary-on-dark) 35%, transparent);
+  color: var(--foreground);
+}
+
+/* Autofill (B28-10, passage 28) : Chrome/Safari peignent un fond bleu pâle opaque sur tout champ
+   autofilli (login/signup), quel que soit le CSS de l'app — un carré bleu clair sur la carte
+   `glass` quasi noire, clash direct. `-webkit-text-fill-color` (pas `color`, ignoré par le moteur
+   d'autofill) + un `box-shadow` inset assez grand pour recouvrir tout le fond injecté imitent la
+   couleur de fond réelle du champ (le seul levier qui fonctionne contre cette peinture navigateur). */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--foreground);
+  box-shadow: inset 0 0 0 1000px var(--background-soft);
+  caret-color: var(--foreground);
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+/* Espace réservé pour BottomTabBar.tsx (B27-2, passage 27) : la barre est `position:fixed`, donc HORS
+   du flux — rien ne réservait sa hauteur sur AUCUNE page mobile, et son arête supérieure pouvait
+   trancher le dernier contenu visible (mesuré sur le h2 "Profs vérifiés" à hauteur de viewport
+   réduite). 71px = hauteur mesurée de la barre en régime normal ; 44px = son plancher sous `xshort`
+   (max-height:420px, cf. tailwind.config.ts) depuis B27-2. Sur la fiche prof, où la barre est
+   masquée (BottomTabBar.tsx), cette réserve s'ajoute sans dégât à `pb-24` — un peu de blanc en plus,
+   jamais un défaut. */
+@media (max-width: 767px) {
+  main {
+    padding-bottom: 71px;
+  }
+}
+@media (max-width: 767px) and (max-height: 420px) {
+  main {
+    padding-bottom: 44px;
+  }
+}
+
+@layer utilities {
+  .glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur)) saturate(150%);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg); /* DESIGN-PLAN §7 : radius 1,5rem obligatoire sur glass */
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* B21-6 : `prefers-reduced-motion: reduce` n'était honoré nulle part — 3 cartes prof
+   (hover:scale-[1.02] transition-transform) et l'indicateur d'onglet actif (transition-all)
+   continuaient de bouger. On retire seulement le déplacement/l'échelle, jamais les transitions de
+   couleur (pas du mouvement) ni l'anneau de focus (latence déjà traitée B18-7). Sélecteur par
+   substring de classe : couvre toute future utilisation de ces utilitaires Tailwind sans liste
+   figée d'éléments. */
+@media (prefers-reduced-motion: reduce) {
+  [class*="transition-transform"],
+  [class*="transition-all"] {
+    transition-property: color, background-color, border-color, box-shadow, opacity !important;
+  }
+
+  .animate-card-enter {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* B25-14 (passage 25) : `document.getAnimations()` juste après le premier rendu de `/` renvoyait 0 —
+   le DESIGN-PLAN promet une cascade des cartes prof (stagger 60ms, scale 0,8→1) qui n'existait
+   nulle part dans le code, seulement dans le document. Neutralisée sous `prefers-reduced-motion`
+   ci-dessus et sous impression (`animation: none` déjà posé globalement plus bas). `both` : la carte
+   reste à son état final (opacity:1) avant ET après l'animation, jamais un flash de contenu invisible
+   si `animation-delay` n'a pas encore démarré. */
+@keyframes card-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-card-enter {
+  animation: card-enter 0.4s ease-out both;
+}
+
+/* B21-1 : aucune règle @media print n'existait — la page imprimée/exportée en PDF sortait
+   texte quasi-blanc sur fond quasi-noir, et les navigateurs n'impriment pas les fonds par défaut
+   (print-color-adjust: economy) → texte blanc cassé sur papier blanc, ~1,03:1. La fiche prof
+   (tarifs, conditions d'annulation, garanties, nom) est précisément la page qu'on imprime avant de
+   réserver son cours. `[class*="fixed"]` masque toute barre ancrée au viewport (barre d'onglets,
+   barre d'achat mobile) : sur papier, une position "fixed" n'a aucun sens et laisserait un bloc
+   vide répété sur chaque page. */
+@media print {
+  * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+    backdrop-filter: none !important;
+    animation: none !important;
+  }
+
+  body::before {
+    display: none !important;
+  }
+
+  body,
+  main,
+  div,
+  section,
+  aside {
+    background: #ffffff !important;
+    color: #111111 !important;
+  }
+
+  .glass {
+    border: 1px solid #ccc !important;
+  }
+
+  [class*="fixed"] {
+    display: none !important;
+  }
+}
