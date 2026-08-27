@@ -27,6 +27,9 @@ export interface Prof {
   types_garde: string[];
   commune: string;
   karma_score: number;
+  /** EX-001 : présent dans la réponse API (ProfPublic) — non affiché dans la tuile
+      (un bouton de lecture imbriqué dans le <a> de la fiche serait invalide en HTML/a11y). */
+  video_30s_url?: string | null;
 }
 
 interface CarteProfsProps {

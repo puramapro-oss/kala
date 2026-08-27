@@ -55,6 +55,7 @@ export interface Database {
           longitude: number;
           rayon_km: number;
           adresse_exacte: string | null;
+          video_30s_url: string | null;
           statut_verification: Database['purama_marketplace']['Enums']['statut_verification'];
           badge_verifie: boolean;
           identite_verifiee_le: string | null;
@@ -109,11 +110,27 @@ export interface Database {
           payment_intent_id: string | null;
           transfer_id: string | null;
           payout_id: string | null;
+          eleve_mineur: boolean;
+          compte_parent_id: string | null;
           cree_le: string;
           maj_le: string;
         };
         Insert: Omit<Database['purama_marketplace']['Tables']['reservations']['Row'], 'id' | 'cree_le' | 'maj_le'>;
         Update: Partial<Database['purama_marketplace']['Tables']['reservations']['Insert']>;
+        Relationships: [];
+      };
+      enregistrements: {
+        Row: {
+          id: string;
+          app_id: string;
+          reservation_id: string;
+          url: string;
+          duree_s: number;
+          prive: boolean;
+          cree_le: string;
+        };
+        Insert: Omit<Database['purama_marketplace']['Tables']['enregistrements']['Row'], 'id' | 'cree_le'>;
+        Update: Partial<Database['purama_marketplace']['Tables']['enregistrements']['Insert']>;
         Relationships: [];
       };
       animaux: {

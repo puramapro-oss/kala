@@ -26,6 +26,8 @@ export interface ProfPublic {
   types_garde: string[];
   commune: string;
   karma_score: number;
+  /** EX-001 : vidéo 30s obligatoire à la publication — l'onde jouable (T-14) la lit. */
+  video_30s_url: string | null;
 }
 
 function haversine(lat1: number, lon1: number, lat2: number, lon2: number): number {
@@ -47,7 +49,7 @@ export async function getProfsPublics(coords: Coords, rayon = 25, limit = 5): Pr
   const { data: prestataires, error: errPrestataires } = await supabase
     .schema('purama_marketplace')
     .from('prestataires')
-    .select('id, profil_id, titre, commune, latitude, longitude, karma_score, note_moyenne, nb_avis, est_demo')
+    .select('id, profil_id, titre, commune, latitude, longitude, karma_score, note_moyenne, nb_avis, est_demo, video_30s_url')
     .eq('app_id', APP_ID)
     .eq('statut_verification', 'verifie')
     .eq('badge_verifie', true);
@@ -127,6 +129,7 @@ export async function getProfsPublics(coords: Coords, rayon = 25, limit = 5): Pr
         types_garde: typesGarde,
         commune: p.commune,
         karma_score: p.karma_score,
+        video_30s_url: p.video_30s_url,
         _distance: distance,
       };
     })

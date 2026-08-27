@@ -13,6 +13,7 @@ import Card from '@/components/ui/Card';
 import CardTitle from '@/components/ui/CardTitle';
 import AvatarInitiale from '@/components/ui/AvatarInitiale';
 import NoteProf from '@/components/ui/NoteProf';
+import FormeOnde30s from '@/components/brand/FormeOnde30s';
 
 type PrestationRow = Database['purama_marketplace']['Tables']['prestations']['Row'];
 type AvisRow = Database['purama_marketplace']['Tables']['avis']['Row'];
@@ -308,6 +309,23 @@ export default async function ProfPage({ params }: PageProps) {
           </Card>
         </div>
         </div>
+
+        {/* Écouter {prenom} (T-14, DESIGN-PLAN §3) : l'onde jouable — signature KALA. Le CHECK
+            `prestataires_video_coherente` garantit une vidéo pour tout prof vérifié ; le garde
+            défensif couvre le brouillon servi par erreur et la démo sans seed. Placée AVANT tout
+            le reste : on choisit son prof en l'entendant jouer, pas après avoir lu son CV. */}
+        {prest.video_30s_url && (
+          <section className="mb-8">
+            <h2 className="mb-3 text-2xl font-semibold">Écouter {prenom}</h2>
+            <Card className="border border-border p-6 max-w-[686px]">
+              <FormeOnde30s url={prest.video_30s_url} label={prenom} />
+              <p className="mt-4 text-sm text-muted-foreground">
+                Un extrait de 30 secondes enregistré par {prenom} — pour le choisir en
+                l&apos;entendant jouer, pas sur une photo.
+              </p>
+            </Card>
+          </section>
+        )}
 
         {/* Tarifs mobile — affiché en flux normal sous md uniquement (haut de page, avant le fold,
             pour ne pas être masqué par le bloc CTA) ; repris dans la colonne droite à md, dans
