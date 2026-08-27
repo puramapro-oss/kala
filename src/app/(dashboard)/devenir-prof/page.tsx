@@ -678,7 +678,7 @@ export default function DevenirProfPage() {
               marche" juste en dessous, dans la même colonne de même largeur — texte décalé de
               9px. Carte de section (pas un item de liste) → p-6. */}
           {/* B38-21 (passage 38, MOYEN) : `border-primary/20` composait à 1,15:1 — imperceptible,
-              la carte lisait comme un paragraphe vert flottant. `--primary` (mousse foncée) a une
+              la carte lisait comme un paragraphe vert flottant. `--primary` (laiton foncée) a une
               luminance brute trop faible pour tenir 3:1 en dessous de pleine opacité, quel que soit
               l'alpha raisonnable ; `--primary-on-dark` (déjà la variante conçue pour porter du
               contraste, cf. globals.css) recalculée à 60% d'alpha composite : 3,65:1. */}

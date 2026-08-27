@@ -53,7 +53,7 @@ export default function BottomTabBar() {
     // bg-background/95 (B22-2, CRITIQUE) : `/96` n'est pas un palier de l'échelle d'opacité Tailwind
     // (…, 90, 95, 100) — l'utilitaire n'était jamais généré, aucune erreur de build, `background-color`
     // calculé valait `rgba(0,0,0,0)` : la barre n'avait qu'un `backdrop-blur`, le contenu se lisait au
-    // travers à 12,60:1 (le h2 Fraunces de la section suivante traversait "Accueil" en toutes lettres).
+    // travers à 12,60:1 (le h2 Syne de la section suivante traversait "Accueil" en toutes lettres).
     // B26-2 (passage 26) : même symptôme à /95 (95% n'est pas 100%) — une barre de navigation fixe n'a
     // aucune raison d'être translucide, `bg-background` plein retire le risque à la source.
     <nav aria-label="Navigation par onglets" className="md:hidden fixed bottom-0 inset-x-0 z-50 bg-background border-t border-border">

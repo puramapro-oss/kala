@@ -290,7 +290,7 @@ export default async function DashboardPage() {
                   parent, juste après le bloc info, jamais poussé au bord droit de la carte. */}
               <div className="mt-4 flex flex-col gap-4 md:mt-0 md:flex-row md:items-center md:gap-6 md:shrink-0">
                 {prochaineCours?.statut === 'en_cours' && (
-                  // B38-16 (passage 38) : IBM Plex Mono au lieu de Fraunces — réglait la famille,
+                  // B38-16 (passage 38) : Anonymous Pro au lieu de Syne — réglait la famille,
                   // pas le poids. B39-3 (passage 39, MOYEN) : DA mesure que ce compteur (28px/600,
                   // seul accent vert `--primary-on-dark` de la carte) reste le premier objet que
                   // l'œil attrape, devant le sujet réel "Cours avec Marie" (Inter 16px blanc,
@@ -300,7 +300,7 @@ export default async function DashboardPage() {
                   // est réservé aux vrais CTA/succès, pas à un simple compte). Le chiffre reste
                   // avant son libellé (repère de lecture rapide déjà validé), juste sans plus
                   // peser que le texte qui l'entoure.
-                  // B41-10 (passage 41) : 16px sortait de l'échelle IBM Plex Mono à 3 paliers
+                  // B41-10 (passage 41) : 16px sortait de l'échelle Anonymous Pro à 3 paliers
                   // (12/14/20, alignée sur les 3 diamètres d'avatar) — ramené à 14px.
                   // B41-6 (passage 41, DA contre-audit) : AVANT — `text-center` restait sur ce
                   // bloc (seul texte centré de toute la carte) alors que le sujet au-dessus est
@@ -329,14 +329,14 @@ export default async function DashboardPage() {
                   {prochaineCours?.statut === 'en_cours' ? (
                     <a
                       href={`/cours/${prochaineCours.id}/timeline`}
-                      className="inline-flex min-h-11 items-center rounded-pill bg-primary-on-dark px-6 py-3 text-sm font-semibold text-[#0A0A0F] shadow-lg transition hover:opacity-90"
+                      className="inline-flex min-h-11 items-center rounded-pill bg-primary-on-dark px-6 py-3 text-sm font-semibold text-[#1C1F26] shadow-lg transition hover:opacity-90"
                     >
                       Voir la timeline
                     </a>
                   ) : (
                     <a
                       href="/#profs"
-                      className="inline-flex min-h-11 items-center rounded-pill bg-primary-on-dark px-6 py-3 text-sm font-semibold text-[#0A0A0F] shadow-lg transition hover:opacity-90"
+                      className="inline-flex min-h-11 items-center rounded-pill bg-primary-on-dark px-6 py-3 text-sm font-semibold text-[#1C1F26] shadow-lg transition hover:opacity-90"
                     >
                       Trouver un prof
                     </a>
@@ -380,7 +380,7 @@ export default async function DashboardPage() {
             ) : (
               <>
                 {/* S42-e : "0%" est une valeur mise en avant (stat/pourcentage) → 700→600
-                    (font-bold→font-semibold), palier haut retenu pour IBM Plex Mono 14px. */}
+                    (font-bold→font-semibold), palier haut retenu pour Anonymous Pro 14px. */}
                 <p className="text-sm text-muted-foreground">
                   Donnez des cours de musique et de loisirs près de chez vous — <span className="font-semibold"><span className="font-mono">{formatPourcent(0)}</span></span> de commission.
                 </p>

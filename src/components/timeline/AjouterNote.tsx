@@ -19,7 +19,7 @@ export default function AjouterNote({ onNoteAjoutee, onAnnuler }: AjouterNotePro
 
   return (
     <Card className="p-6">
-      <h3 className="text-lg font-semibold text-creme mb-4">Ajouter une note</h3>
+      <h3 className="text-lg font-semibold text-portee mb-4">Ajouter une note</h3>
 
       <div className="mb-4">
         <textarea
@@ -27,7 +27,7 @@ export default function AjouterNote({ onNoteAjoutee, onAnnuler }: AjouterNotePro
           onChange={(e) => setTexte(e.target.value)}
           placeholder="Ex: L'élève a bien enchaîné ses gammes aujourd'hui, rythme plus solide..."
           rows={5}
-          className="w-full px-3 py-2 bg-corbeau/30 border border-creme/20 rounded-lg text-creme placeholder-creme/40 focus:border-primary-on-dark focus:outline-none"
+          className="w-full px-3 py-2 bg-pupitre/30 border border-portee/20 rounded-lg text-portee placeholder-portee/40 focus:border-primary-on-dark focus:outline-none"
           autoFocus
         />
       </div>

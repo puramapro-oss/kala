@@ -1,6 +1,6 @@
 /**
  * format.ts — Formatage cohérent des prix, distances, dates (DESIGN-PLAN §2, DESIGN-SCORE rubrique 2).
- * Français canonique, toujours en font-mono (IBM Plex Mono, tabular-nums).
+ * Français canonique, toujours en font-mono (Anonymous Pro, tabular-nums).
  */
 
 /**

@@ -21,13 +21,13 @@ const config: CapacitorConfig = {
   },
   ios: {
     contentInset: 'automatic',
-    backgroundColor: '#0A0A0F',
+    backgroundColor: '#1C1F26',
     preferredContentMode: 'mobile',
     scheme: 'KALA',
     limitsNavigationsToAppBoundDomains: false,
   },
   android: {
-    backgroundColor: '#0A0A0F',
+    backgroundColor: '#1C1F26',
     captureInput: true,
     webContentsDebuggingEnabled: false,
     allowMixedContent: false,
@@ -36,7 +36,7 @@ const config: CapacitorConfig = {
   plugins: {
     SplashScreen: {
       launchShowDuration: 2000,
-      backgroundColor: '#0A0A0F',
+      backgroundColor: '#1C1F26',
       androidScaleType: 'CENTER_CROP',
       showSpinner: false,
       splashFullScreen: true,
@@ -44,7 +44,7 @@ const config: CapacitorConfig = {
     },
     StatusBar: {
       style: 'dark',
-      backgroundColor: '#0A0A0F',
+      backgroundColor: '#1C1F26',
       overlaysWebView: true,
     },
     Haptics: {},

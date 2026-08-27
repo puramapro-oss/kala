@@ -152,7 +152,7 @@ export default function WalletPage() {
           B43-8 : la carte pleine largeur (1232px) pour un montant seul ("0,00 €") ne remplissait
           que 11% de son rail (134px d'encre / 1232px) — demi-largeur (`max-w-[608px]`, le même
           module que "Côté prof" du dashboard) et le libellé + le statut passent à
-          gauche pendant que le montant, monté au palier Fraunces 700 le plus haut (60px, échelle à
+          gauche pendant que le montant, monté au palier Syne 700 le plus haut (60px, échelle à
           6 paliers déjà établie : 700={60,42,30}), s'ancre à droite — l'encre couvre alors tout le
           rail de la carte au lieu d'un bloc empilé isolé dans son coin supérieur gauche. */}
       <Card
@@ -224,8 +224,8 @@ export default function WalletPage() {
 
         {mouvements.length === 0 ? (
           // B38-12 (passage 38, MOYEN) : `<EmptyState>` rend son titre en `<h3>`, qui hérite (règle
-          // globale globals.css h1-h6 → Fraunces) du même corps que "Historique" (h2) juste
-          // au-dessus — Fraunces 18px/600 des deux côtés, à 68px d'écart, aucune hiérarchie
+          // globale globals.css h1-h6 → Syne) du même corps que "Historique" (h2) juste
+          // au-dessus — Syne 18px/600 des deux côtés, à 68px d'écart, aucune hiérarchie
           // perceptible entre le titre de section et l'état vide qu'il contient. Remplacé par un
           // bloc local (même stratégie que /gains B31-13, qui évite déjà `<EmptyState>` pour la
           // même raison) : titre en `<p>` Inter 16px/500 text-muted-foreground (jamais une balise

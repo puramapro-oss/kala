@@ -125,7 +125,7 @@ export default async function GainsPage() {
             </p>
             <a
               href="/devenir-prof"
-              className="inline-flex min-h-11 items-center justify-center px-6 py-3 rounded-full bg-primary-on-dark text-[#0A0A0F] font-semibold hover:opacity-90 transition-opacity"
+              className="inline-flex min-h-11 items-center justify-center px-6 py-3 rounded-full bg-primary-on-dark text-[#1C1F26] font-semibold hover:opacity-90 transition-opacity"
             >
               Devenir prof
             </a>
@@ -194,8 +194,8 @@ export default async function GainsPage() {
       <Card className="p-6 mb-6">
         {/* B39-4/B39-9 (passage 39, MOYEN) : ce montant est le sujet réel de la page mais restait
             en Inter (aucune classe `font-display`), 36px — pas de chiffre-héros unique/page (règle
-            B39-9), incohérent avec le solde de /wallet. Aligné sur la même recette : Fraunces
-            (`font-display`). B41-10 (passage 41) : 48px n'appartient pas à l'échelle Fraunces à 6
+            B39-9), incohérent avec le solde de /wallet. Aligné sur la même recette : Syne
+            (`font-display`). B41-10 (passage 41) : 48px n'appartient pas à l'échelle Syne à 6
             paliers — ramené à 42px (palier le plus proche), même correctif appliqué au solde
             `/wallet`. */}
         <CardTitle tag="h2">Total gagné</CardTitle>

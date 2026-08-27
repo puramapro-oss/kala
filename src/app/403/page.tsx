@@ -23,7 +23,7 @@ export default function ForbiddenPage() {
         </p>
         <a
           href="/"
-          className="inline-block rounded-lg bg-primary-on-dark px-6 py-3 font-semibold text-[#0A0A0F] transition hover:bg-primary-on-dark/90"
+          className="inline-block rounded-lg bg-primary-on-dark px-6 py-3 font-semibold text-[#1C1F26] transition hover:bg-primary-on-dark/90"
         >
           Retour à l'accueil
         </a>

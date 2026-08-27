@@ -32,7 +32,7 @@ export default function EmptyState({ title, description, action, icon, align = '
           {typeof action === 'object' && 'label' in action && 'href' in action ? (
             <a
               href={action.href}
-              className="inline-flex items-center justify-center h-11 px-6 rounded-full border-2 border-transparent bg-primary-on-dark text-[#0A0A0F] font-semibold hover:opacity-90 transition-opacity"
+              className="inline-flex items-center justify-center h-11 px-6 rounded-full border-2 border-transparent bg-primary-on-dark text-[#1C1F26] font-semibold hover:opacity-90 transition-opacity"
             >
               {action.label}
             </a>

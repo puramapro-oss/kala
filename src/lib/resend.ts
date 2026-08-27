@@ -27,7 +27,7 @@ function emailShell({
   footnote?: string;
 }) {
   return `
-    <div style="font-family: Arial, sans-serif; max-width: 480px; margin: 0 auto; background: #0A0A0F; color: #F5F5FA; padding: 32px;">
+    <div style="font-family: Arial, sans-serif; max-width: 480px; margin: 0 auto; background: #1C1F26; color: #E9E6DE; padding: 32px;">
       <h1 style="color: ${accentColor}; letter-spacing: 0.04em;">${title}</h1>
       ${bodyHtml}
       ${cta ? `<a href="${cta.href}" style="display:inline-block; background:${cta.color ?? '#6B7F6A'}; color:#fff; padding:14px 28px; border-radius:12px; text-decoration:none; font-weight:bold; margin:16px 0;">${cta.label}</a>` : ''}

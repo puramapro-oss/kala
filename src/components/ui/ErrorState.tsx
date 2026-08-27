@@ -34,7 +34,7 @@ export default function ErrorState({
       {retry && (
         <button
           onClick={retry}
-          className="px-4 py-2 bg-primary-on-dark text-[#0A0A0F] rounded-lg hover:opacity-90 transition-opacity"
+          className="px-4 py-2 bg-primary-on-dark text-[#1C1F26] rounded-lg hover:opacity-90 transition-opacity"
         >
           Réessayer
         </button>

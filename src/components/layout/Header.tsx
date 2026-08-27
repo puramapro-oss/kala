@@ -81,7 +81,7 @@ export default function Header() {
               padding grandit uniquement la zone cliquable dans l'espace déjà vertical disponible —
               aucun décalage de la hauteur du header ni des autres éléments (mesuré avant/après). */}
           <Link href="/" className="flex items-center gap-2 py-1">
-            {/* B41-10 (passage 41) : 18px/700 hors échelle Fraunces à 6 paliers (18 est réservé
+            {/* B41-10 (passage 41) : 18px/700 hors échelle Syne à 6 paliers (18 est réservé
                 au 600) — mot-logo passé en semibold, taille inchangée. */}
             <span className="font-display text-lg font-semibold text-primary-on-dark">KALA</span>
           </Link>

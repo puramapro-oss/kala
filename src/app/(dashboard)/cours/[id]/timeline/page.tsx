@@ -166,8 +166,8 @@ export default function TimelineCoursPage() {
         <div className="max-w-4xl">
           <Card className="p-6">
             <div className="animate-pulse">
-              <div className="h-6 bg-mousse/20 rounded w-1/3 mb-4"></div>
-              <div className="h-4 bg-mousse/20 rounded w-2/3"></div>
+              <div className="h-6 bg-laiton/20 rounded w-1/3 mb-4"></div>
+              <div className="h-4 bg-laiton/20 rounded w-2/3"></div>
             </div>
           </Card>
         </div>
@@ -197,7 +197,7 @@ export default function TimelineCoursPage() {
       <div className="container mx-auto max-w-7xl px-6 py-8">
         <div className="max-w-4xl">
           <Card className="p-6">
-            <p className="text-creme/60">
+            <p className="text-portee/60">
               La timeline sera accessible dès le début du cours.
             </p>
           </Card>
@@ -223,10 +223,10 @@ export default function TimelineCoursPage() {
         <h3 className="font-display text-lg font-semibold text-foreground truncate">
           Cours avec {profNom || 'votre prof'}
         </h3>
-        <p className="text-sm text-creme/60 truncate">Suivi partagé du cours</p>
+        <p className="text-sm text-portee/60 truncate">Suivi partagé du cours</p>
       </div>
       {/* S42-e : plage de dates = donnée secondaire → font-medium (500). */}
-      <div className="flex flex-wrap items-center gap-2 text-sm text-creme/60">
+      <div className="flex flex-wrap items-center gap-2 text-sm text-portee/60">
         <span className="font-mono font-medium">{formatPlageCompacte(debut_le, fin_le)}</span>
         <Badge variant={statut === 'en_cours' ? 'success' : 'default'}>
           {statut === 'en_cours' ? 'En cours' : 'Terminée'}
@@ -263,13 +263,13 @@ export default function TimelineCoursPage() {
           <ClipboardList aria-hidden="true" className="h-5 w-5 shrink-0 text-secondary-on-dark" />
         </CardIcon>
         <CardTitle tag="h3">Résumé</CardTitle>
-        {/* B41-10 (passage 41) : 18px hors échelle IBM Plex Mono à 3 paliers (12/14/20) — ce
+        {/* B41-10 (passage 41) : 18px hors échelle Anonymous Pro à 3 paliers (12/14/20) — ce
             chiffre joue un rôle de stat mise en avant dans la carte, ramené au palier le plus
             grand (20px) plutôt que compressé au palier body. */}
         <p className="font-mono text-xl font-semibold text-foreground">
           {entries.length} {entries.length > 1 ? 'entrées' : 'entrée'}
         </p>
-        <p className="mt-1 text-sm text-creme/60">
+        <p className="mt-1 text-sm text-portee/60">
           Dernière activité :{' '}
           {new Date(entries[entries.length - 1].survenu_le).toLocaleString('fr-FR', {
             day: 'numeric',
@@ -280,18 +280,18 @@ export default function TimelineCoursPage() {
         </p>
 
         <div className="mt-4 border-t border-border pt-4">
-          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-creme/50">
+          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-portee/50">
             Résumé du cours
           </p>
           <ul className="space-y-1">
             {joursCours.map(({ jour, nombre }) => (
               <li
                 key={jour.toISOString()}
-                className="flex items-center justify-between text-sm text-creme/60"
+                className="flex items-center justify-between text-sm text-portee/60"
               >
                 <span>{jour.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}</span>
                 {/* S42-e : compteur d'entrées par jour = donnée secondaire → font-medium (500). */}
-                <span className="font-mono font-medium text-creme/80">
+                <span className="font-mono font-medium text-portee/80">
                   {nombre} {nombre > 1 ? 'entrées' : 'entrée'}
                 </span>
               </li>
@@ -335,7 +335,7 @@ export default function TimelineCoursPage() {
           </h1>
           {/* B34-6 (passage 34) : plage longue unifiée — remplace les 2 spans « Du »/« Au »
               séparés par un `·` (3e format de date du produit, désormais réduit à 2). */}
-          <div className="flex items-center gap-3 text-sm text-creme/60">
+          <div className="flex items-center gap-3 text-sm text-portee/60">
             <span>{formatPlageLongue(debut_le, fin_le)}</span>
             <Badge variant={statut === 'en_cours' ? 'success' : 'default'}>
               {statut === 'en_cours' ? 'En cours' : 'Terminée'}
@@ -362,7 +362,7 @@ export default function TimelineCoursPage() {
           <div className="min-w-0">
             {/* Actions prof */}
             {isProf && statut === 'en_cours' && (
-              <Card className="p-6 mb-6 bg-mousse/10 border-mousse/20">
+              <Card className="p-6 mb-6 bg-laiton/10 border-laiton/20">
                 <div className="grid grid-cols-2 gap-3">
                   <Button
                     variant="ghost"
@@ -390,8 +390,8 @@ export default function TimelineCoursPage() {
             {loadingTimeline && (
               <Card className="p-6">
                 <div className="animate-pulse space-y-4">
-                  <div className="h-4 bg-mousse/20 rounded w-3/4"></div>
-                  <div className="h-4 bg-mousse/20 rounded w-1/2"></div>
+                  <div className="h-4 bg-laiton/20 rounded w-3/4"></div>
+                  <div className="h-4 bg-laiton/20 rounded w-1/2"></div>
                 </div>
               </Card>
             )}
@@ -463,7 +463,7 @@ export default function TimelineCoursPage() {
 
         {/* Modals ajout */}
         {modalType === 'photo' && (
-          <div className="fixed inset-0 bg-corbeau/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-pupitre/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
             <div className="max-w-lg w-full">
               <AjouterPhoto
                 onPhotoAjoutee={async (photoUrl, note) => {
@@ -483,7 +483,7 @@ export default function TimelineCoursPage() {
         )}
 
         {modalType === 'note' && (
-          <div className="fixed inset-0 bg-corbeau/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-pupitre/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
             <div className="max-w-lg w-full">
               <AjouterNote
                 onNoteAjoutee={async (texte) => {
@@ -545,18 +545,18 @@ function EntreeTimelineCard({ entry, auteurPrenom }: { entry: EntreeTimeline; au
                 (rôle distinct du "titre de carte latérale", reste à 16px — décision documentée, un
                 item de liste répété n'a pas la même charge visuelle qu'un titre de section) portait
                 19,2px hérité de la règle globale h1-h6 line-height:1.2.
-                B39-6 (passage 39) : couleur seule alignée sur `--foreground` (#F5F0E6 supprimé
+                B39-6 (passage 39) : couleur seule alignée sur `--foreground` (portée héritée depuis
                 comme couleur de titre, recette DA) — la taille 16px reste volontairement distincte
                 du composant `CardTitle` (18px), rôle différent assumé. */}
             <h4 className="font-semibold text-foreground leading-6">{titre}</h4>
             <div className="flex items-center gap-2 shrink-0">
-              <span className="text-xs text-creme/60">{heureLocale}</span>
+              <span className="text-xs text-portee/60">{heureLocale}</span>
               {auteurPrenom && <AvatarInitiale prenom={auteurPrenom} size={24} />}
             </div>
           </div>
 
           {message && (
-            <p className="text-sm text-creme/80 mb-2">{message}</p>
+            <p className="text-sm text-portee/80 mb-2">{message}</p>
           )}
 
           {photoAffichable && (

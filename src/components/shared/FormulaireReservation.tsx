@@ -363,7 +363,7 @@ export default function FormulaireReservation({
         {/* variant="primary", pas "alerte" (B29, passage 29) : le CTA de conversion principal
             portait la couleur terracotta réservée aux états destructifs (règle B14-6) — même
             famille que le bouton « Se déconnecter » du dashboard. Le variant primary rend
-            désormais le bon couple mousse clair/texte foncé depuis B28-3. */}
+            désormais le bon couple laiton (clair)/texte foncé depuis B28-3. */}
         <Button type="submit" variant="primary" size="lg" className="w-full" disabled={loading}>
           {loading ? 'Création...' : 'Continuer vers le paiement'}
         </Button>
@@ -384,7 +384,7 @@ export default function FormulaireReservation({
               (CardTitle.tsx couvrait déjà /gains, /dashboard, /devenir-prof,
               /wallet, /timeline — celui-ci vivait ici, dans le composant partagé consommé par
               /mes-cours ET /dashboard, donc invisible aux agents scopés fichier par fichier des
-              passages précédents). Convergé sur le même composant : Fraunces 18px/600, text-foreground. */}
+              passages précédents). Convergé sur le même composant : Syne 18px/600, text-foreground. */}
           <CardTitle tag="h3">Récapitulatif</CardTitle>
           <div className="space-y-1 text-sm">
             {instrument.trim() && (

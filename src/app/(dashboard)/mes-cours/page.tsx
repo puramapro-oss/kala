@@ -32,7 +32,7 @@ async function MesCoursContent({ searchParams }: PageProps) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <div className="max-w-md text-center">
-          {/* B41-10 (passage 41) : 24px/700 hors échelle Fraunces à 6 paliers (24 est réservé au
+          {/* B41-10 (passage 41) : 24px/700 hors échelle Syne à 6 paliers (24 est réservé au
               600) — remonté à 30px/700, aligné sur le h1 "Réserver avec {prenom}" de cette même
               page (état alternatif du même rôle sémantique). */}
           <h1 className="text-3xl font-bold mb-4">Prof non spécifié</h1>
@@ -45,7 +45,7 @@ async function MesCoursContent({ searchParams }: PageProps) {
               `<button>`, jamais un lien de navigation). */}
           <a
             href="/#profs"
-            className="inline-flex h-11 items-center justify-center rounded-full border-2 border-transparent bg-primary-on-dark px-6 font-semibold text-[#0A0A0F] hover:bg-primary-on-dark/90"
+            className="inline-flex h-11 items-center justify-center rounded-full border-2 border-transparent bg-primary-on-dark px-6 font-semibold text-[#1C1F26] hover:bg-primary-on-dark/90"
           >
             Voir les profs
           </a>
@@ -119,7 +119,7 @@ async function MesCoursContent({ searchParams }: PageProps) {
 
   // Si non authentifié : afficher CTA login au lieu de redirect (EX-007 : parcours fluide), en
   // gardant le contexte du prof (B28-1) — mêmes classes de bouton que la fiche
-  // (`rounded-pill bg-primary-on-dark ... text-[#0A0A0F] shadow-lg`, B28-3) plutôt que le couple
+  // (`rounded-pill bg-primary-on-dark ... text-[#1C1F26] shadow-lg`, B28-3) plutôt que le couple
   // `bg-primary`/`text-primary-on-dark-foreground` (jeton jamais enregistré, ne générait aucun CSS —
   // même défaut que B26-1), et une sortie explicite vers la fiche plutôt qu'une carte sans issue.
   if (!user) {
@@ -168,7 +168,7 @@ async function MesCoursContent({ searchParams }: PageProps) {
                   px-8 déjà en place), border-2 border-transparent. */}
               <a
                 href={`/login?next=${encodeURIComponent(`/mes-cours?prof=${prof.id}`)}`}
-                className="inline-flex h-14 items-center justify-center rounded-pill border-2 border-transparent bg-primary-on-dark px-8 font-semibold text-[#0A0A0F] shadow-lg transition hover:opacity-90"
+                className="inline-flex h-14 items-center justify-center rounded-pill border-2 border-transparent bg-primary-on-dark px-8 font-semibold text-[#1C1F26] shadow-lg transition hover:opacity-90"
               >
                 Se connecter / S'inscrire
               </a>

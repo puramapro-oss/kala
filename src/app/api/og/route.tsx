@@ -1,6 +1,6 @@
 /**
  * /api/og — OG image dynamique (EX-026)
- * Génère une image depuis identity_seed (terre/mousse/creme/corbeau/alerte).
+ * Génère une image depuis identity_seed (pupitre/laiton/applaudissement).
  * Utilisé par /prof/[id] et autres pages clés.
  */
 
@@ -27,7 +27,7 @@ async function loadGoogleFont(font: string, text: string) {
 }
 
 function FormeOnde() {
-  const c = '#F5F0E6';
+  const c = '#1C1F26'; // barres pupitre sur fond laiton
   const barres = [38, 60, 84, 60, 38];
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, width: 96, height: 96 }}>
@@ -52,9 +52,9 @@ export async function GET(req: NextRequest) {
   const type = searchParams.get('type') || 'default';
   const id = searchParams.get('id') || '';
 
-  const terre = '#8B6F47';
-  const mousse = '#4A6741';
-  const creme = '#F5F0E6';
+  const laiton = '#C9A227';
+  const applaudissement = '#E5484D';
+  const pupitre = '#1C1F26';
 
   let titre = 'KALA';
   let sousTitre = 'Cours de musique et loisirs à domicile';
@@ -90,8 +90,8 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  const fraunces = await loadGoogleFont('Fraunces:wght@700', titre);
-  const inter = await loadGoogleFont('Inter:wght@400', sousTitre);
+  const syne = await loadGoogleFont('Syne:wght@700', titre);
+  const workSans = await loadGoogleFont('Work+Sans:wght@400', sousTitre);
 
   return new ImageResponse(
     (
@@ -103,8 +103,8 @@ export async function GET(req: NextRequest) {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          background: `linear-gradient(135deg, ${mousse} 0%, ${terre} 100%)`,
-          color: creme,
+          background: `linear-gradient(135deg, ${laiton} 0%, ${applaudissement} 100%)`,
+          color: pupitre,
           padding: '60px',
         }}
       >
@@ -112,7 +112,7 @@ export async function GET(req: NextRequest) {
         <div
           style={{
             fontSize: '72px',
-            fontFamily: 'Fraunces',
+            fontFamily: 'Syne',
             fontWeight: 700,
             marginTop: '32px',
             marginBottom: '20px',
@@ -124,7 +124,7 @@ export async function GET(req: NextRequest) {
         <div
           style={{
             fontSize: '36px',
-            fontFamily: 'Inter',
+            fontFamily: 'Work Sans',
             fontWeight: 400,
             textAlign: 'center',
             opacity: 0.9,
@@ -138,8 +138,8 @@ export async function GET(req: NextRequest) {
       width: 1200,
       height: 630,
       fonts: [
-        { name: 'Fraunces', data: fraunces, style: 'normal', weight: 700 },
-        { name: 'Inter', data: inter, style: 'normal', weight: 400 },
+        { name: 'Syne', data: syne, style: 'normal', weight: 700 },
+        { name: 'Work Sans', data: workSans, style: 'normal', weight: 400 },
       ],
     }
   );

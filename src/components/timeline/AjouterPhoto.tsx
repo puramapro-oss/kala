@@ -83,7 +83,7 @@ export default function AjouterPhoto({ onPhotoAjoutee, onAnnuler }: AjouterPhoto
 
   return (
     <Card className="p-6">
-      <h3 className="text-lg font-semibold text-creme mb-4">Ajouter une photo</h3>
+      <h3 className="text-lg font-semibold text-portee mb-4">Ajouter une photo</h3>
 
       {error && (
         <div className="mb-4 p-3 bg-alerte/20 border border-alerte/40 rounded text-sm text-alerte">
@@ -120,7 +120,7 @@ export default function AjouterPhoto({ onPhotoAjoutee, onAnnuler }: AjouterPhoto
       </div>
 
       <div className="mb-4">
-        <label className="block text-sm font-medium text-creme/80 mb-2">
+        <label className="block text-sm font-medium text-portee/80 mb-2">
           Note (optionnelle)
         </label>
         <textarea
@@ -128,7 +128,7 @@ export default function AjouterPhoto({ onPhotoAjoutee, onAnnuler }: AjouterPhoto
           onChange={(e) => setNote(e.target.value)}
           placeholder="Ajouter une note pour accompagner cette photo..."
           rows={3}
-          className="w-full px-3 py-2 bg-corbeau/30 border border-creme/20 rounded-lg text-creme placeholder-creme/40 focus:border-primary-on-dark focus:outline-none"
+          className="w-full px-3 py-2 bg-pupitre/30 border border-portee/20 rounded-lg text-portee placeholder-portee/40 focus:border-primary-on-dark focus:outline-none"
           disabled={uploading}
         />
       </div>

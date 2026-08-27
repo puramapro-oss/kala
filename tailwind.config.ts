@@ -30,12 +30,13 @@ const config: Config = {
         shortp: { raw: '(max-height: 700px) and (orientation: portrait)' },
       },
       colors: {
-        // Identity_seed KALA (noms littéraux)
-        terre: '#8B6F47',
-        mousse: '#4A6741',
-        creme: '#F5F0E6',
-        corbeau: '#1C1B18',
-        alerte: '#D97757',
+        // Identity_seed KALA (noms littéraux, DESIGN-PLAN §1)
+        laiton: '#C9A227',
+        applaudissement: '#E5484D',
+        portee: '#E9E6DE',
+        pupitre: '#1C1F26',
+        feutre: '#4A4E57',
+        alerte: '#F06A6E', // applaudissement éclairci — seul rouge texte-AA de la palette
         // Tokens sémantiques mappés sur variables CSS (dialecte unique).
         // background/background-soft/primary/primary-on-dark/accent-light passent par un triplet
         // RGB (--x-rgb dans globals.css) pour que les utilitaires d'opacité Tailwind (`bg-x/NN`)
@@ -46,12 +47,11 @@ const config: Config = {
         'foreground-muted': 'var(--foreground-muted)',
         'muted-foreground': 'var(--foreground-muted)', // alias pour les 22 usages existants
         primary: 'rgb(var(--primary-rgb) / <alpha-value>)',
-        'primary-on-dark': 'rgb(var(--primary-on-dark-rgb) / <alpha-value>)', // variante claire mousse pour texte/bordure sur fond sombre (WCAG AA)
-        // B24-3 : secondary (terre) rejoint le dialecte triplet RGB — un `bg-secondary/NN` sur
-        // `var(--secondary)` seul aurait reproduit B18-9 (opacité silencieusement ignorée) au moment
-        // où terre reçoit enfin un usage réel (avant ce passage, aire mesurée = 0 sur l'écran).
+        'primary-on-dark': 'rgb(var(--primary-on-dark-rgb) / <alpha-value>)', // laiton pour texte/bordure/fond bouton sur fond sombre (WCAG AA)
+        // B24-3 : secondary (applaudissement) rejoint le dialecte triplet RGB — un `bg-secondary/NN`
+        // sur `var(--secondary)` seul aurait reproduit B18-9 (opacité silencieusement ignorée).
         secondary: 'rgb(var(--secondary-rgb) / <alpha-value>)',
-        'secondary-on-dark': 'rgb(var(--secondary-on-dark-rgb) / <alpha-value>)', // variante claire terre pour texte/bordure sur fond sombre (WCAG AA)
+        'secondary-on-dark': 'rgb(var(--secondary-on-dark-rgb) / <alpha-value>)', // applaudissement éclairci pour texte/bordure sur fond sombre (WCAG AA)
         'accent-light': 'rgb(var(--accent-light-rgb) / <alpha-value>)',
         'accent-dark': 'var(--accent-dark)',
         alert: 'var(--alert)',
@@ -62,7 +62,7 @@ const config: Config = {
         // aucun CSS, laissant les champs login/signup retomber sur le gris par défaut de Tailwind
         // (rgb(229,231,235)) au lieu de la bordure de marque.
         'glass-border': 'var(--glass-border)',
-        'primary-foreground': '#FFFFFF',
+        'primary-foreground': '#1C1F26', // laiton est CLAIR : le texte sur primary est pupitre, pas blanc
       },
       borderRadius: {
         sm: 'var(--radius-sm)',
@@ -72,9 +72,9 @@ const config: Config = {
         pill: 'var(--radius-pill)',
       },
       fontFamily: {
-        display: ['var(--font-fraunces)', 'serif'],
-        body: ['var(--font-inter)', 'sans-serif'],
-        mono: ['var(--font-ibm-plex-mono)', 'monospace'],
+        display: ['var(--font-syne)', 'sans-serif'],
+        body: ['var(--font-work-sans)', 'sans-serif'],
+        mono: ['var(--font-anonymous-pro)', 'monospace'],
       },
     },
   },

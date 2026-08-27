@@ -9,24 +9,27 @@
      code ne l'ait demandé. */
   color-scheme: dark;
 
-  /* Background / foreground */
-  --background: #0a0a0f;
-  --background-soft: #14141c;
-  --foreground: #f5f5fa;
-  --foreground-muted: rgba(245, 245, 250, 0.78);
-  --foreground-secondary: rgba(245, 245, 250, 0.55);
+  /* Background / foreground — identity_seed KALA : pupitre / portée */
+  --background: #1c1f26; /* pupitre */
+  --background-soft: #262b36;
+  --foreground: #e9e6de; /* portée */
+  --foreground-muted: rgba(233, 230, 222, 0.78);
+  --foreground-secondary: rgba(233, 230, 222, 0.55);
 
-  /* KALA identity_seed override */
-  --primary: #4a6741; /* mousse (fond boutons) */
-  --primary-on-dark: #8fb47f; /* mousse éclaircie pour texte/bordure sur fond sombre (contraste AA) */
-  --secondary: #8b6f47; /* terre */
-  /* B24-3 (passage 24) : terre brute mesure ~4,2:1 sur le fond — au-dessus du seuil non-textuel 3:1
-     (bordures, anneaux, remplissages d'icône) mais SOUS le seuil texte normal AA 4,5:1. Même geste
-     que --primary-on-dark : une variante éclaircie dédiée au texte/bordure de contraste, jamais la
-     valeur brute --secondary pour du texte. Mesuré ~8,8:1 sur rgb(10,10,15). */
-  --secondary-on-dark: #c9a876; /* terre éclaircie pour texte/bordure sur fond sombre (contraste AA) */
-  --accent-light: #f5f0e6; /* creme */
-  --accent-dark: #1c1b18; /* corbeau */
+  /* KALA identity_seed (DESIGN-PLAN §7) : primary = laiton, secondary = applaudissement */
+  --primary: #c9a227; /* laiton — CLAIR : tout texte posé dessus doit être pupitre, jamais blanc (~2,6:1) */
+  /* Le laiton mesure déjà ~6,8:1 sur pupitre : aucune éclaircie nécessaire pour le texte/bordure —
+     --primary-on-dark reprend donc la valeur brute (rôle conservé : c'est LUI le fond des boutons
+     solides, avec texte pupitre — doctrine B28-3 inchangée). */
+  --primary-on-dark: #c9a227; /* laiton, texte/bordure/fond bouton sur fond sombre (AA) */
+  --secondary: #e5484d; /* applaudissement — non-texte uniquement (bordures, icônes, aires teintées) */
+  /* B24-3 (passage 24, reporté KALA) : applaudissement brut mesure ~4,3:1 sur pupitre — au-dessus
+     du seuil non-textuel 3:1 (bordures, anneaux, remplissages d'icône) mais SOUS le seuil texte
+     normal AA 4,5:1. Même geste que --primary-on-dark : une variante éclaircie dédiée au
+     texte/bordure de contraste, jamais la valeur brute --secondary pour du texte. ~5,2:1 mesuré. */
+  --secondary-on-dark: #f06a6e; /* applaudissement éclaircie pour texte/bordure sur fond sombre (AA) */
+  --accent-light: #e9e6de; /* portée */
+  --accent-dark: #1c1f26; /* pupitre */
 
   /* Triplets RGB (sans fonction couleur) — requis par Tailwind pour générer les utilitaires
      d'opacité (`bg-primary/10`, etc.) sur une couleur pilotée par var() : Tailwind ne peut pas
@@ -37,16 +40,17 @@
      vérité pour tout usage direct `var(--x)` hors Tailwind (fill SVG, color-mix, etc.).
      Ne pas dupliquer pour --foreground-muted (déjà semi-transparent par défaut, 22 usages nus
      comptent sur cette alpha 0.78 — un token opacity-aware casserait ces usages existants). */
-  --background-rgb: 10 10 15;
-  --background-soft-rgb: 20 20 28;
-  --primary-rgb: 74 103 65;
-  --primary-on-dark-rgb: 143 180 127;
-  --secondary-rgb: 139 111 71;
-  --secondary-on-dark-rgb: 201 168 118;
-  --accent-light-rgb: 245 240 230;
+  --background-rgb: 28 31 38;
+  --background-soft-rgb: 38 43 54;
+  --primary-rgb: 201 162 39;
+  --primary-on-dark-rgb: 201 162 39;
+  --secondary-rgb: 229 72 77;
+  --secondary-on-dark-rgb: 240 106 110;
+  --accent-light-rgb: 233 230 222;
 
-  /* Sémantique erreur — distincte de l'action, alignée sur alerte (identity_seed) (B14-6) */
-  --alert: #d97757;
+  /* Sémantique erreur — applaudissement éclairci (identity_seed n'a pas de rouge d'erreur dédié :
+  applaudissement EST le rouge KALA, sa variante -on-dark porte le texte AA) (B14-6) */
+  --alert: #f06a6e;
 
   /* Couleurs signature héros (dégradé vert franc) */
   /* --hero-gradient-start assombri #31503a→#1a2c1f (B26-9, passage 26) : la forme d'onde
@@ -55,9 +59,9 @@
      sur l'aire de l'illustration. #1a2c1f calculé pour donner exactement ≥3:1 contre la terre
      (mesuré 3,13:1), sans changer le hue ni la forme radiale du dégradé, seulement sa clarté
      maximale. */
-  --hero-gradient-start: #1a2c1f;
-  --hero-gradient-mid: #1b2a20;
-  --hero-gradient-end: #101713;
+  --hero-gradient-start: #262b36;
+  --hero-gradient-mid: #222731;
+  --hero-gradient-end: #16191f;
 
   /* UI tokens sémantiques */
   --card: rgba(255, 255, 255, 0.05);
@@ -71,7 +75,7 @@
      opacité — vérifié : `--primary-on-dark` à 60% d'alpha composite à 3,65:1, quand `--primary` à
      20% ne dépasse pas 1,15:1, l'écart de luminance brute entre les deux teintes ne se comprime
      pas linéairement avec l'alpha). */
-  --border: rgba(255, 255, 255, 0.34);
+  --border: rgba(255, 255, 255, 0.4); /* 0,34 mesurait ~2,9:1 sur pupitre (plus clair que le fond PASHU d'origine) — relevé à 0,40 (~3,5:1) */
   /* B36-1 (passage 36) : 0,34 mesurait en réalité 2,88:1 (sous le seuil) — corrigé à 0,38, premier
      palier qui tient partout : 3,25:1 contre --background (rgb(10,10,15)), 3,37:1 sur une carte
      `glass`, 3,39:1 sur --background-soft. Dédié aux contrôles identifiés par la DA (segments
@@ -85,7 +89,7 @@
      1.4.11 (3:1), invisible à `axe-core` qui ne teste que le texte. `.glass` habille TOUTE carte
      cliquable du produit (profs, connexion, tarifs) ; 0,34 mesure 3,04:1, et le bénéfice — la page
      cesse de paraître vide — profite à Espacement et Émotion en même temps qu'à Contraste. */
-  --glass-border: rgba(255, 255, 255, 0.34);
+  --glass-border: rgba(255, 255, 255, 0.4); /* même relèvement que --border : 0,34 tombait sous 3:1 sur pupitre */
   --glass-blur: 20px;
 
   /* Radii */
@@ -107,7 +111,7 @@ body {
   min-height: 100vh;
   color: var(--foreground);
   background: var(--background);
-  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
+  font-family: var(--font-work-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
     'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -133,7 +137,7 @@ body::before {
 /* letter-spacing + line-height ajoutés à la règle globale (B26-6, passage 26) : cette règle ne
    couvrait que famille/graisse — l'interlettrage et l'interligne étaient posés `tracking-tight`/
    `leading-[…]` élément par élément, jamais palier par palier. Résultat mesuré : à corps et graisse
-   identiques (36px et 30px, w700 Fraunces), certains h1 avaient `tracking-tight` et leurs frères sur
+   identiques (36px et 30px, w700 Syne), certains h1 avaient `tracking-tight` et leurs frères sur
    d'autres pages non — h1 accueil vs h1 pages légales, h1 fiche vs h1 login/signup. Une valeur par
    défaut ici (héritée par TOUT titre, remplaçable par une classe plus spécifique si un cas l'exige
    vraiment) ferme la source du défaut au lieu du symptôme sur chaque page une par une. */
@@ -143,7 +147,7 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: var(--font-fraunces), serif;
+  font-family: var(--font-syne), sans-serif;
   font-weight: 600;
   letter-spacing: -0.025em;
   line-height: 1.2;
@@ -151,21 +155,21 @@ h6 {
 
 /* Rôles typographiques KALA (DESIGN-PLAN §1) */
 /* B38-17 (passage 38, MAJEUR) : letter-spacing/line-height n'étaient posés que sur h1..h6 (ligne
-   ~141) — tout usage de Fraunces sur un span/p/div (avatar "M", compteur, montant) héritait de la
+   ~141) — tout usage de Syne sur un span/p/div (avatar "M", compteur, montant) héritait de la
    famille mais échappait au tracking, rendant selon la balise deux rendus différents au même corps
    (18px/-0.45px vs 18px/normal). Dupliqué ici, jamais divergent des valeurs h1..h6. */
 .font-display {
-  font-family: var(--font-fraunces), serif;
+  font-family: var(--font-syne), sans-serif;
   letter-spacing: -0.025em;
   line-height: 1.2;
 }
 
 .font-body {
-  font-family: var(--font-inter), sans-serif;
+  font-family: var(--font-work-sans), sans-serif;
 }
 
 .font-mono {
-  font-family: var(--font-ibm-plex-mono), monospace;
+  font-family: var(--font-anonymous-pro), monospace;
   font-variant-numeric: tabular-nums; /* alignement chiffres */
 }
 
@@ -174,11 +178,10 @@ a {
   text-decoration: none;
 }
 
-/* B39-10 (passage 39, MOYEN) : 5 traitements de lien coexistaient (vert souligné, terre souligné,
-   blanc 78% souligné, vert non souligné, blanc 78% non souligné) — deux voisins dans la même carte
+/* B39-10 (passage 39, MOYEN) : 5 traitements de lien coexistaient — deux voisins dans la même carte
    `/dashboard` pour la même nature d'action. Recette DA : deux rôles, pas cinq. `--secondary-on-dark`
-   (terre) cesse d'être une couleur de lien — accent décoratif uniquement (avatars/badges) à partir
-   de maintenant. */
+   (applaudissement) cesse d'être une couleur de lien — accent décoratif uniquement (avatars/badges)
+   à partir de maintenant. */
 .link-action {
   color: var(--primary-on-dark);
   text-decoration: underline;
@@ -204,7 +207,7 @@ a {
 
 /* ::selection (B28-13, passage 28) : sans règle explicite, la sélection de texte retombe sur le bleu
    système par défaut du navigateur — seule surface interactive de l'app à ne jamais porter la teinte
-   mousse. Même token que l'anneau de focus (--primary-on-dark), opacité réduite pour rester lisible
+   laiton. Même token que l'anneau de focus (--primary-on-dark), opacité réduite pour rester lisible
    sous du texte foncé ET clair. */
 ::selection {
   background: color-mix(in srgb, var(--primary-on-dark) 35%, transparent);

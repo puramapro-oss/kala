@@ -62,7 +62,7 @@ export default function CookieConsentBanner({ appName, politiqueHref = '/politiq
             type="button"
             data-testid="cookie-accept"
             onClick={acceptAll}
-            className="min-h-11 rounded-pill bg-primary px-5 text-sm font-medium text-white"
+            className="min-h-11 rounded-pill bg-primary-on-dark px-5 text-sm font-medium text-[#1C1F26]"
           >
             Tout accepter
           </button>

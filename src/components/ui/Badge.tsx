@@ -19,9 +19,11 @@ export default function Badge({ children, variant = 'default', className = '' }:
   // quand le remplissage reste discret — un seul composant, seule la teinte change entre états.
   const variantClasses = {
     default: 'bg-background-soft/50 backdrop-blur-sm text-foreground border border-[color:var(--border-control)]',
-    success: 'bg-primary-on-dark text-[#0A0A0F]',
-    warning: 'bg-secondary text-white',
-    error: 'bg-alert text-white',
+    success: 'bg-primary-on-dark text-[#1C1F26]',
+    // warning/error : KALA n'a qu'un rouge (applaudissement) — solide + blanc mesurait 3,9:1/2,8:1.
+    // Même recette que les cartes à accent (B38-21) : teinte 15-20% + texte -on-dark + bordure.
+    warning: 'bg-secondary/15 text-secondary-on-dark border border-secondary/30',
+    error: 'bg-alert/20 text-alert border border-alert/40',
   };
 
   return <span className={`${baseClasses} ${variantClasses[variant]} ${className}`}>{children}</span>;

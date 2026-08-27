@@ -35,17 +35,19 @@ export default function Button({
   // jamais `backgroundColor` — une mesure de survol qui compare spécifiquement `backgroundColor`
   // (comme celle de la DA) le voit identique avant/après. Ajouter une variation de couleur réelle
   // au survol, en plus de l'opacité déjà là, rend le changement visible sur les deux propriétés.
-  // bg-primary-on-dark text-[#0A0A0F], pas bg-primary text-white (B28-3, passage 28) : les pages
-  // écrites à la main (fiche prof, home) utilisent depuis toujours `bg-primary-on-dark` (#8fb47f,
+  // bg-primary-on-dark text-[#1C1F26], pas bg-primary text-white (B28-3, passage 28) : les pages
+  // écrites à la main (fiche prof, home) utilisent depuis toujours `bg-primary-on-dark` (#c9a227,
   // texte foncé, 8.47:1) comme SEUL bouton d'action primaire de l'app — ce composant partagé, jamais
   // audité par la DA en 27 passages (aucune page qui le rend n'était sur son parcours fixe, cf B28-1),
-  // avait dérivé sur `bg-primary` (#4a6741, olive foncé) + `text-white`, un 2e système de couleur
+  // avait dérivé sur `bg-primary` (#c9a227, doré clair — d'où texte foncé) + `text-white`, un 2e système de couleur
   // jamais délibéré. `--primary` reste réservé aux fonds/bordures teintés (`bg-primary/5`, `border-primary/20`).
   const variantClasses = {
-    primary: 'bg-primary-on-dark text-[#0A0A0F] hover:bg-primary-on-dark/90 hover:opacity-90',
-    secondary: 'bg-secondary text-white hover:bg-secondary/90 hover:opacity-90',
+    primary: 'bg-primary-on-dark text-[#1C1F26] hover:bg-primary-on-dark/90 hover:opacity-90',
+    // secondary (0 usage aujourd'hui) : blanc sur applaudissement mesurait 3,9:1 — outline
+    // -on-dark (5,2:1) plutôt que solide, même recette que le CTA secondaire de la home.
+    secondary: 'border-secondary-on-dark text-secondary-on-dark hover:bg-secondary-on-dark hover:text-[#1C1F26]',
     ghost: 'bg-transparent !border-border hover:bg-background-soft/50',
-    alerte: 'bg-alerte text-[#0A0A0F] hover:bg-alerte/90 hover:opacity-90 shadow-lg',
+    alerte: 'bg-alerte text-[#1C1F26] hover:bg-alerte/90 hover:opacity-90 shadow-lg',
   };
 
   // B39-7 (passage 39) : 3 paliers explicites seulement — h-9/h-11/h-14 (36/44/56px), jamais un

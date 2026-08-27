@@ -61,7 +61,7 @@ export default function Footer() {
               Seul "0%" doit rester soudé (B18-4) — pas toute la phrase (B19-5 : `whitespace-nowrap`
               sur le `<p>` entier débordait de ~2px à 320 sous lettrage élargi AA 1.4.12).
               formatPourcent (B31-8, remplace le faux espace ml-[3px] de B25-7) : une seule règle
-              pour le signe % — fine insécable U+202F réelle (code 8239), IBM Plex Mono, gras. */}
+              pour le signe % — fine insécable U+202F réelle (code 8239), Anonymous Pro, gras. */}
           {/* S42-e : "0%" est une valeur mise en avant → 700→600 (font-bold→font-semibold), ce span
               ne contient que le mono, "de commission..." reste un texte-frère non affecté. */}
           <p className="text-sm text-foreground-muted">

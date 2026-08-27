@@ -18,7 +18,7 @@ interface NoteProfProps {
 
 export default function NoteProf({ note, size = 'sm', className = '' }: NoteProfProps) {
   const iconSize = size === 'lg' ? 22 : 14;
-  // B41-10 (passage 41) : 28px (lg) et 14px (sm) n'appartenaient pas à l'échelle Fraunces à 6
+  // B41-10 (passage 41) : 28px (lg) et 14px (sm) n'appartenaient pas à l'échelle Syne à 6
   // paliers (60/42/30 en 700, 24/18/16 en 600) — remontés au palier le plus proche : 28→30/700,
   // 14→16/600.
   const textClass = size === 'lg' ? 'font-display text-[30px] font-bold' : 'font-display text-base font-semibold';

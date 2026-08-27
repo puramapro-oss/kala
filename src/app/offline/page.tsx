@@ -25,7 +25,7 @@ export default function OfflinePage() {
     <div className="flex flex-1 flex-col items-center justify-center gap-6 bg-background px-6 text-center">
       <FormeOnde className="h-16 w-16 text-primary-on-dark" aria-hidden="true" />
       <div className="space-y-2">
-        {/* B41-10 (passage 41) : 36px (md) hors échelle Fraunces à 6 paliers — remonté à 42px. */}
+        {/* B41-10 (passage 41) : 36px (md) hors échelle Syne à 6 paliers — remonté à 42px. */}
         <h1 className="font-display text-3xl md:text-[42px] font-bold text-foreground">Vous êtes hors ligne</h1>
         <p className="font-body text-foreground-muted max-w-sm">
           {APP_NAME} revient dès que la connexion revient. Vérifiez votre réseau, puis réessayez.
@@ -33,7 +33,7 @@ export default function OfflinePage() {
       </div>
       <a
         href="/"
-        className="rounded-pill bg-primary-on-dark px-6 py-3 font-semibold font-body text-[#0A0A0F] shadow-lg transition hover:opacity-90"
+        className="rounded-pill bg-primary-on-dark px-6 py-3 font-semibold font-body text-[#1C1F26] shadow-lg transition hover:opacity-90"
       >
         Réessayer
       </a>

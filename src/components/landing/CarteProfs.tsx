@@ -218,7 +218,7 @@ export default function CarteProfs({ coords, distancesUnreliable, initialProfs }
                 )}
               </div>
 
-              {/* font-mono (B24-7) : le DESIGN-PLAN assigne IBM Plex Mono aux « chiffres de tarifs,
+              {/* font-mono (B24-7) : le DESIGN-PLAN assigne Anonymous Pro aux « chiffres de tarifs,
                   horaires, distances » — le prix rendait en Inter (font-body), seule la distance
                   ci-dessus était déjà en mono avant ce correctif. */}
               {p.tarif_minimum_cents !== null && (
@@ -258,7 +258,7 @@ export default function CarteProfs({ coords, distancesUnreliable, initialProfs }
           style={{ animationDelay: `${profs.length * 60}ms` }}
         >
           {/* border-secondary-on-dark/40 (B24-3) : terre = côté prof de la place de marché
-              (gagner, être vérifié, être noté) — mousse reste réservée au côté élève
+              (gagner, être vérifié, être noté) — laiton reste réservée au côté élève
               (chercher, réserver, payer). Cette tuile est la seule action côté prof de la home. */}
           {/* <div> nu, pas <Card> (B28-12 retourné, passage 29) : `.glass` (Card.tsx) pose un
               SHORTHAND `border: 1px solid var(--glass-border)` — la couleur `border-secondary-on-dark/40`
@@ -277,8 +277,8 @@ export default function CarteProfs({ coords, distancesUnreliable, initialProfs }
             <h3 className="font-display text-lg font-semibold text-foreground">Devenir prof</h3>
             <div className="mt-1 mb-3 inline-flex min-w-0 max-w-full items-center gap-2 px-3 py-1 rounded-pill bg-secondary/20 border border-secondary-on-dark">
               {/* formatPourcent (B31-8) : même règle unique que Footer.tsx/HomeClient.tsx —
-                  fine insécable U+202F réelle avant %, IBM Plex Mono. */}
-              {/* S42-e : "0%" (IBM Plex Mono) est une valeur mise en avant → 600 posé directement sur
+                  fine insécable U+202F réelle avant %, Anonymous Pro. */}
+              {/* S42-e : "0%" (Anonymous Pro) est une valeur mise en avant → 600 posé directement sur
                   le span mono (override de l'héritage 700 du badge, sans toucher la graisse Inter de
                   "de commission" qui partage le même span parent — hors périmètre S42-e). */}
               <span className="min-w-0 text-sm font-bold text-foreground"><span className="whitespace-nowrap"><span className="font-mono font-semibold">{formatPourcent(0)}</span></span> de commission</span>

@@ -60,7 +60,7 @@ export default function LegalReacceptanceGate({ appName, docsEnAttente, onAccept
           type="button"
           onClick={handleAccept}
           disabled={busy === current}
-          className="min-h-11 w-full rounded-pill bg-primary px-5 text-sm font-medium text-white disabled:opacity-60"
+          className="min-h-11 w-full rounded-pill bg-primary-on-dark px-5 text-sm font-medium text-[#1C1F26] disabled:opacity-60"
         >
           {busy === current ? 'Enregistrement…' : "J'ai lu, je continue"}
         </button>

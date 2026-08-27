@@ -26,7 +26,7 @@ export default function NotFound() {
       <div className="space-y-2">
         {/* text-3xl, pas text-2xl (B26-7) : le message principal d'une page pleine doit se
             distinguer d'un élément de marque en 3 lignes, pas s'y confondre.
-            B41-10 (passage 41) : 36px (md) hors échelle Fraunces à 6 paliers — remonté à 42px. */}
+            B41-10 (passage 41) : 36px (md) hors échelle Syne à 6 paliers — remonté à 42px. */}
         <h1 className="font-display text-3xl md:text-[42px] font-bold text-foreground">Cette note s&apos;est tue avant d&apos;arriver ici</h1>
         <p className="font-body text-foreground-muted max-w-sm">
           La page que vous cherchez n&apos;existe pas ou plus. Retrouvez les profs vérifiés près de chez vous.
@@ -34,7 +34,7 @@ export default function NotFound() {
       </div>
       <a
         href="/#profs"
-        className="rounded-pill bg-primary-on-dark px-6 py-3 font-semibold font-body text-[#0A0A0F] shadow-lg transition hover:opacity-90"
+        className="rounded-pill bg-primary-on-dark px-6 py-3 font-semibold font-body text-[#1C1F26] shadow-lg transition hover:opacity-90"
       >
         Voir les profs
       </a>

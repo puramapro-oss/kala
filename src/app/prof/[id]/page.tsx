@@ -335,7 +335,7 @@ export default async function ProfPage({ params }: PageProps) {
                 page, pas en le déplaçant. */}
             <a
               href={`/mes-cours?prof=${prest.id}`}
-              className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-pill bg-primary-on-dark px-6 py-3 text-center text-base font-semibold text-[#0A0A0F] shadow-lg transition hover:opacity-90"
+              className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-pill bg-primary-on-dark px-6 py-3 text-center text-base font-semibold text-[#1C1F26] shadow-lg transition hover:opacity-90"
             >
               Réserver un cours
             </a>
@@ -466,12 +466,12 @@ export default async function ProfPage({ params }: PageProps) {
               </div>
             )}
 
-            {/* CTA — couleur mousse (action), alerte réservée aux états destructifs (B14-6).
+            {/* CTA — couleur laiton (action), alerte réservée aux états destructifs (B14-6).
                 print:hidden (B21-1) : bouton inutile sur papier, et "Réserver" ne doit apparaître
                 sur aucune version imprimée de la fiche. */}
             <a
               href={`/mes-cours?prof=${prest.id}`}
-              className="print:hidden flex h-11 w-full items-center justify-center rounded-pill border-2 border-transparent bg-primary-on-dark px-6 text-center text-base font-semibold text-[#0A0A0F] shadow-lg transition hover:opacity-90"
+              className="print:hidden flex h-11 w-full items-center justify-center rounded-pill border-2 border-transparent bg-primary-on-dark px-6 text-center text-base font-semibold text-[#1C1F26] shadow-lg transition hover:opacity-90"
             >
               Réserver un cours
             </a>
@@ -550,7 +550,7 @@ export default async function ProfPage({ params }: PageProps) {
             {prestations && prestations.length > 0 && (
               <div className="leading-tight">
                 <p className="text-xs text-foreground-muted whitespace-nowrap">À partir de</p>
-                {/* B41-10 : mono à 14px, aligné sur le palier IBM Plex Mono 12/14/20. */}
+                {/* B41-10 : mono à 14px, aligné sur le palier Anonymous Pro 12/14/20. */}
                 <p className="text-sm font-semibold text-foreground font-mono whitespace-nowrap" style={{ fontVariantNumeric: 'tabular-nums' }}>
                   {(Math.min(...prestations.map((p: PrestationRow) => p.prix_cents)) / 100).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €
                 </p>
@@ -561,7 +561,7 @@ export default async function ProfPage({ params }: PageProps) {
                 print:hidden (B21-1) : "Réserver" absent de toute version imprimée. */}
             <a
               href={`/mes-cours?prof=${prest.id}`}
-              className="print:hidden min-w-0 shrink rounded-pill bg-primary-on-dark px-6 py-3 xshort:py-2 text-center text-base font-semibold leading-tight text-[#0A0A0F] shadow-lg transition hover:opacity-90"
+              className="print:hidden min-w-0 shrink rounded-pill bg-primary-on-dark px-6 py-3 xshort:py-2 text-center text-base font-semibold leading-tight text-[#1C1F26] shadow-lg transition hover:opacity-90"
             >
               Réserver un cours
             </a>
@@ -576,7 +576,7 @@ export default async function ProfPage({ params }: PageProps) {
  * AvisCards — cartes d'avis signées, rendues à DEUX emplacements : un seul markup, jamais deux
  * versions qui divergent.
  * Avis signé (§E-8 passage 30) : initiale + prénom de l'auteur — « un avis sans prénom vaut la
- * moitié d'un avis signé » sur une place de confiance. Pastille MOUSSE, pas AvatarInitiale
+ * moitié d'un avis signé » sur une place de confiance. Pastille LAITON, pas AvatarInitiale
  * (terre) : terre est réservé au côté prof (B24-3), l'auteur d'un avis est un élève.
  * Composition sans séparateur « · » (technique B16-4, jamais d'orphelin de ligne).
  */
@@ -611,7 +611,7 @@ function AvisCards({
                   {prenomAuteur}
                 </span>
               )}
-              {/* B39-9 (passage 39, MOYEN) : IBM Plex Mono, même famille que la date à droite —
+              {/* B39-9 (passage 39, MOYEN) : Anonymous Pro, même famille que la date à droite —
                   la famille Inter est réservée au chiffre-héros unique de la page (note globale
                   `NoteProf` plus haut). */}
               {/* S42-e : la note (valeur mise en avant) reste 600, la date d'avis (secondaire)

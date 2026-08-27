@@ -300,7 +300,7 @@ export default function VerificationsPage() {
                 <button
                   onClick={() => handleVerifier(c.id)}
                   disabled={processing === c.id || !c.referenceVerif.reference || !c.referenceVerif.dateDelivrance || !verifConfirme[c.id]}
-                  className="rounded-lg bg-primary-on-dark px-4 py-2 text-sm font-semibold text-[#0A0A0F] transition hover:bg-primary-on-dark/90 disabled:opacity-50"
+                  className="rounded-lg bg-primary-on-dark px-4 py-2 text-sm font-semibold text-[#1C1F26] transition hover:bg-primary-on-dark/90 disabled:opacity-50"
                 >
                   {processing === c.id ? 'Traitement...' : 'Vérifier'}
                 </button>

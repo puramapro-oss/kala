@@ -186,8 +186,8 @@ export default function SignupPage() {
           </div>
 
           {/* B24-1 (passage 24) : ce bouton portait une signature entièrement différente du CTA
-              primaire du reste du site (fond mousse foncé + texte blanc + 500 + rayon 24px + 40px de
-              haut, contre mousse clair + texte sombre + 600 + pill + ≥44px partout ailleurs) — le
+              primaire du reste du site (fond laiton foncé + texte blanc + 500 + rayon 24px + 40px de
+              haut, contre laiton clair + texte sombre + 600 + pill + ≥44px partout ailleurs) — le
               seul bouton primaire du produit sous le minimum tactile 44px, et à l'endroit précis où
               l'app demande le plus d'engagement (créer un compte). Classes alignées à l'identique
               sur `HomeClient.tsx`/`prof/[id]/page.tsx`. px-6, pas px-4 (B26-5, passage 26) : même
@@ -197,7 +197,7 @@ export default function SignupPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-pill bg-primary-on-dark px-6 py-3 text-[#0A0A0F] font-semibold transition hover:opacity-90 disabled:opacity-50"
+            className="w-full rounded-pill bg-primary-on-dark px-6 py-3 text-[#1C1F26] font-semibold transition hover:opacity-90 disabled:opacity-50"
           >
             {loading ? 'Création...' : 'Créer mon compte'}
           </button>

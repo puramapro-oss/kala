@@ -1,4 +1,4 @@
-import { Fraunces, Inter, IBM_Plex_Mono } from 'next/font/google';
+import { Syne, Work_Sans, Anonymous_Pro } from 'next/font/google';
 import './globals.css';
 import Header from '@/components/layout/Header';
 import BottomTabBar from '@/components/layout/BottomTabBar';
@@ -6,23 +6,22 @@ import Footer from '@/components/layout/Footer';
 import ServiceWorkerRegister from '@/components/shared/ServiceWorkerRegister';
 import CookieBanner from '@/components/shared/CookieBanner';
 
-const fraunces = Fraunces({
+const syne = Syne({
   subsets: ['latin'],
-  variable: '--font-fraunces',
-  display: 'swap',
-  axes: ['SOFT', 'WONK'],
-});
-
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
+  variable: '--font-syne',
   display: 'swap',
 });
 
-const ibmPlexMono = IBM_Plex_Mono({
+const workSans = Work_Sans({
   subsets: ['latin'],
-  variable: '--font-ibm-plex-mono',
-  weight: ['400', '500', '600'],
+  variable: '--font-work-sans',
+  display: 'swap',
+});
+
+const anonymousPro = Anonymous_Pro({
+  subsets: ['latin'],
+  variable: '--font-anonymous-pro',
+  weight: ['400', '700'],
   display: 'swap',
 });
 
@@ -53,12 +52,12 @@ export const metadata = {
 };
 
 export const viewport = {
-  themeColor: '#0a0a0f',
+  themeColor: '#1C1F26',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr" className={`${fraunces.variable} ${inter.variable} ${ibmPlexMono.variable}`}>
+    <html lang="fr" className={`${syne.variable} ${workSans.variable} ${anonymousPro.variable}`}>
       <body>
         <ServiceWorkerRegister />
         {/* B25-8 (passage 25) : `<Header/>` vivait EN DEHORS de ce conteneur `min-h-screen flex-col` —
