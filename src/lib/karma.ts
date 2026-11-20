@@ -37,20 +37,20 @@ export function splitRevenue(revenuNetEuros: number): KarmaSplitResult {
     );
   }
 
-  // Arrondi au centime le plus proche (half-up) pour chaque part.
-  // BUG CORRIGÉ : l'ancienne formule `/100*100` avant le round() était une
-  // opération neutre qui arrondissait en réalité à l'EURO le plus proche
-  // (perte de 2 décimales) avant de re-diviser par 100 — ex: 8.65€*50%=4.325€
-  // devenait round(4.325)/100=0.04€ au lieu de 4.33€ (~108× sous-crédité).
-  const partUsers = Math.round(revenuNetEuros * KARMA_SPLIT.users * 100) / 100;
-  const partAsso = Math.round(revenuNetEuros * KARMA_SPLIT.asso * 100) / 100;
-  // partSASU = reliquat pour garantir partUsers+partAsso+partSASU === revenuNetEuros exactement
-  const partSASU = Math.round((revenuNetEuros - partUsers - partAsso) * 100) / 100;
+  const totalCents = Math.round(revenuNetEuros * 100);
+  if (!Number.isSafeInteger(totalCents * Math.max(KARMA_SPLIT.users, KARMA_SPLIT.asso))) {
+    throw new Error('karma.splitRevenue : montant non représentable en centimes');
+  }
+
+  const usersCents = Math.round((totalCents * KARMA_SPLIT.users) / 100);
+  const assoCents = Math.round((totalCents * KARMA_SPLIT.asso) / 100);
+  // Le reliquat absorbe les arrondis : aucun centime créé ni perdu.
+  const sasuCents = totalCents - usersCents - assoCents;
 
   return {
-    montantTotal: revenuNetEuros,
-    partUsers,
-    partAsso,
-    partSASU,
+    montantTotal: totalCents / 100,
+    partUsers: usersCents / 100,
+    partAsso: assoCents / 100,
+    partSASU: sasuCents / 100,
   };
 }
