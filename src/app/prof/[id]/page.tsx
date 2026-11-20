@@ -353,7 +353,7 @@ export default async function ProfPage({ params }: PageProps) {
                 page, pas en le déplaçant. */}
             <a
               href={`/mes-cours?prof=${prest.id}`}
-              className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-pill bg-primary-on-dark px-6 py-3 text-center text-base font-semibold text-[#1C1F26] shadow-lg transition hover:opacity-90"
+              className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-pill bg-primary-on-dark px-6 py-3 text-center text-base font-semibold text-primary-foreground shadow-lg transition hover:opacity-90"
             >
               Réserver un cours
             </a>
@@ -489,7 +489,7 @@ export default async function ProfPage({ params }: PageProps) {
                 sur aucune version imprimée de la fiche. */}
             <a
               href={`/mes-cours?prof=${prest.id}`}
-              className="print:hidden flex h-11 w-full items-center justify-center rounded-pill border-2 border-transparent bg-primary-on-dark px-6 text-center text-base font-semibold text-[#1C1F26] shadow-lg transition hover:opacity-90"
+              className="print:hidden flex h-11 w-full items-center justify-center rounded-pill border-2 border-transparent bg-primary-on-dark px-6 text-center text-base font-semibold text-primary-foreground shadow-lg transition hover:opacity-90"
             >
               Réserver un cours
             </a>
@@ -563,7 +563,7 @@ export default async function ProfPage({ params }: PageProps) {
         {/* CTA mobile/tablette — S41-d (passage 41) : bloc en FLUX NORMAL en fin de page, jamais
             une barre fixe — les onglets globaux (BottomTabBar) restent la seule barre fixe, la
             navigation principale reste accessible partout. */}
-        <div className="lg:hidden mt-8 rounded-2xl border border-border bg-background-soft p-4">
+        <div className="lg:hidden mt-8 rounded-lg border border-border bg-background-soft p-4">
           <div className="flex items-center justify-between gap-4">
             {prestations && prestations.length > 0 && (
               <div className="leading-tight">
@@ -579,7 +579,7 @@ export default async function ProfPage({ params }: PageProps) {
                 print:hidden (B21-1) : "Réserver" absent de toute version imprimée. */}
             <a
               href={`/mes-cours?prof=${prest.id}`}
-              className="print:hidden min-w-0 shrink rounded-pill bg-primary-on-dark px-6 py-3 xshort:py-2 text-center text-base font-semibold leading-tight text-[#1C1F26] shadow-lg transition hover:opacity-90"
+              className="print:hidden min-w-0 shrink rounded-pill bg-primary-on-dark px-6 py-3 xshort:py-2 text-center text-base font-semibold leading-tight text-primary-foreground shadow-lg transition hover:opacity-90"
             >
               Réserver un cours
             </a>

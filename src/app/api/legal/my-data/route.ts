@@ -9,11 +9,11 @@
  * par `user_id` — impossible de couvrir ça avec le simple gabarit `EXTRA_TABLES{table,userIdColumn}`
  * du socle générique, chaque table est donc requêtée explicitement ci-dessous.
  */
-import { NextResponse, type NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/supabase-server';
 import { APP_ID } from '@/lib/constants';
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   const supabase = await createServerSupabaseClient();
   const {
     data: { user },

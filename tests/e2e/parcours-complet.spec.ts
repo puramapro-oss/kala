@@ -29,17 +29,18 @@ test.describe('KALA — Parcours public complet', () => {
 
     if (count > 0) {
       const premiere = cartes.first();
-      // Avatar (img ou initiale)
-      await expect(premiere.locator('img').or(premiere.locator('span'))).toBeVisible();
-      // Prénom
-      await expect(premiere.locator('text=/[A-Z][a-z]+/')).toBeVisible();
-      // Distance en km
-      await expect(premiere.locator('text=/km/i')).toBeVisible();
-      // Prix
-      await expect(premiere.locator('text=/€|EUR/i')).toBeVisible();
+      const titre = premiere.getByRole('heading', { level: 3 });
+      await expect(titre).toBeVisible();
+      const prenom = (await titre.innerText()).trim();
+      expect(prenom.length).toBeGreaterThan(0);
+      const photo = premiere.getByRole('img', { name: prenom, exact: true });
+      const initiale = premiere.getByText(prenom.charAt(0).toUpperCase(), { exact: true });
+      await expect(photo.or(initiale).first()).toBeVisible();
+      await expect(premiere).toContainText(/\d[\d\s.,]*\s*km/i);
+      await expect(premiere).toContainText(/\d[\d\s.,]*\s*€/);
     } else {
       // État vide honnête (EX-004)
-      await expect(page.locator('text=/aucun prof|devenir prof/i')).toBeVisible();
+      await expect(page.getByRole('heading', { name: 'Aucun prof dans votre rayon' })).toBeVisible();
     }
   });
 
@@ -55,53 +56,36 @@ test.describe('KALA — Parcours public complet', () => {
     await expect(titre).toBeVisible({ timeout: 5000 });
 
     // Tarif visible
-    await expect(page.locator('text=/€|EUR/i')).toBeVisible();
+    const prix = page.getByText(/^\d[\d\s.,]*\s*€$/).filter({ visible: true });
+    await expect(prix.first()).toBeVisible();
   });
 
   test('EX-007 — Réservation atteignable en ≤3 clics depuis accueil', async ({ page }) => {
-    let clics = 0;
-
     await page.goto(BASE_URL);
-    clics++; // Navigation initiale = 1 clic
-
-    // Cliquer sur 1re carte prof si présente
     const carte = page.locator('section#profs a[href*="/prof/"]').first();
-    if (await carte.isVisible({ timeout: 2000 })) {
-      await carte.click();
-      clics++;
-
-      // La fiche prof porte le CTA « Réserver un cours » vers /mes-cours?prof=<id>
-      // (réservation en flux normal, pas de route /reservation dédiée)
-      const cta = page.locator('a[href*="/mes-cours?prof="]').first();
-      if (await cta.isVisible({ timeout: 2000 })) {
-        await cta.click();
-        clics++;
-
-        // Sans session : porte d'auth vers /login?next= — avec session : /mes-cours?prof=
-        await expect(page).toHaveURL(/\/(login|mes-cours)/, { timeout: 5000 });
-      }
-    }
-
-    // Réservation doit être accessible en ≤3 clics (départ accueil compté)
-    expect(clics).toBeLessThanOrEqual(3);
+    test.skip(await carte.count() === 0, 'Le parcours de réservation nécessite un professeur vérifié.');
+    await carte.click();
+    await expect(page).toHaveURL(/\/prof\/[^/?]+$/);
+    const profId = new URL(page.url()).pathname.split('/').pop();
+    const reserver = page.getByRole('link', { name: 'Réserver un cours', exact: true }).filter({ visible: true });
+    await reserver.first().click();
+    await expect(page).toHaveURL((url) => url.pathname === '/mes-cours' && url.searchParams.get('prof') === profId);
   });
 
   test('EX-028/029/030 — Formulaire de réservation (ou porte auth) derrière /mes-cours?prof=', async ({ page }) => {
     await page.goto(`${BASE_URL}/mes-cours?prof=${PROF_SEED_ID}`);
 
-    // Vérifier que la page charge
-    await expect(page.locator('form,main')).toBeVisible({ timeout: 5000 });
-
-    // Sans session : porte d'auth avec CTA vers /login?next=/mes-cours?prof=
-    const porteAuth = page.locator('a[href*="/login?next="]');
-    if (await porteAuth.first().isVisible({ timeout: 2000 })) {
-      // Parcours anonyme : le CTA mène bien vers la connexion avec retour au formulaire
-      await expect(porteAuth.first()).toHaveAttribute('href', /\/login\?next=/);
+    const porteAuth = page.getByRole('link', { name: "Se connecter / S'inscrire" });
+    const instrument = page.locator('#instrument');
+    await expect(porteAuth.or(instrument).first()).toBeVisible();
+    if (await porteAuth.isVisible()) {
+      const retour = encodeURIComponent(`/mes-cours?prof=${PROF_SEED_ID}`);
+      await expect(porteAuth).toHaveAttribute('href', `/login?next=${retour}`);
       return;
     }
 
     // Avec session : champs clés du cours (instrument, niveau, domicile de l'élève)
-    await expect(page.locator('#instrument')).toBeVisible({ timeout: 5000 });
+    await expect(instrument).toBeVisible();
     await expect(page.locator('#niveau')).toBeVisible();
     await expect(page.locator('#adresse-eleve')).toBeVisible();
 
@@ -119,12 +103,12 @@ test.describe('KALA — Parcours public complet', () => {
     // Vérifier /login accessible
     await page.goto(`${BASE_URL}/login`);
     await expect(page).toHaveURL(/\/login/);
-    await expect(page.locator('form,input[type="email"]')).toBeVisible({ timeout: 5000 });
+    await expect(page.getByRole('textbox', { name: 'Email', exact: true })).toBeVisible();
 
-    // Vérifier /callback ne redirige pas vers /login (route publique)
-    const response = await page.goto(`${BASE_URL}/callback`);
-    // Peut renvoyer erreur si pas de code OAuth, mais NE DOIT PAS rediriger vers /login
-    expect(response?.url()).not.toContain('/login');
+    // Une destination publique distingue le callback de la porte de connexion du dashboard.
+    const response = await page.request.get(`${BASE_URL}/callback?next=%2F`, { maxRedirects: 0 });
+    expect(response.status()).toBe(307);
+    expect(new URL(response.headers().location, BASE_URL).pathname).toBe('/');
   });
 
   test('EX-013 — Responsive 375px sans overflow', async ({ page }) => {

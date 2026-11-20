@@ -1,3 +1,4 @@
+import { kalaConfig } from '../../app.config';
 import { ImageResponse } from 'next/og';
 
 // B22-3 : variante maskable pour l'écran d'accueil iOS — mêmes barres de forme d'onde que
@@ -14,18 +15,18 @@ export default function AppleIcon() {
         style={{
           width: '100%',
           height: '100%',
-          background: '#1C1F26',
+          background: kalaConfig.identitySeed.colors.pupitre,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div style={{ width: 12, height: 44, borderRadius: 6, background: '#C9A227', display: 'flex' }} />
-          <div style={{ width: 12, height: 66, borderRadius: 6, background: '#C9A227', display: 'flex' }} />
-          <div style={{ width: 12, height: 88, borderRadius: 6, background: '#C9A227', display: 'flex' }} />
-          <div style={{ width: 12, height: 60, borderRadius: 6, background: '#C9A227', display: 'flex', opacity: 0.75 }} />
-          <div style={{ width: 12, height: 36, borderRadius: 6, background: '#C9A227', display: 'flex', opacity: 0.5 }} />
+          <div style={{ width: 12, height: 44, borderRadius: 6, background: kalaConfig.identitySeed.colors.laiton, display: 'flex' }} />
+          <div style={{ width: 12, height: 66, borderRadius: 6, background: kalaConfig.identitySeed.colors.laiton, display: 'flex' }} />
+          <div style={{ width: 12, height: 88, borderRadius: 6, background: kalaConfig.identitySeed.colors.laiton, display: 'flex' }} />
+          <div style={{ width: 12, height: 60, borderRadius: 6, background: kalaConfig.identitySeed.colors.laiton, display: 'flex', opacity: 0.75 }} />
+          <div style={{ width: 12, height: 36, borderRadius: 6, background: kalaConfig.identitySeed.colors.laiton, display: 'flex', opacity: 0.5 }} />
         </div>
       </div>
     ),
