@@ -137,7 +137,7 @@ export default function HomeClient({ initialProfs }: HomeClientProps) {
                     code 8239 avant %), tout en Anonymous Pro. */}
                 {/* S42-e : "0%" est une valeur mise en avant → 700→600 (font-bold→font-semibold),
                     ce span ne contient que le mono, aucun autre texte n'hérite du changement. */}
-                <span className="inline-block shrink-0 px-3 py-1 rounded-pill bg-secondary-on-dark text-[#1C1F26] font-semibold text-sm">
+                <span className="inline-block shrink-0 px-3 py-1 rounded-pill bg-secondary-on-dark text-primary-foreground font-semibold text-sm">
                   <span className="font-mono">{formatPourcent(0)}</span>
                 </span>
                 <span className="min-w-0 text-sm font-medium text-foreground-muted">de commission pour le prof</span>
@@ -160,13 +160,13 @@ export default function HomeClient({ initialProfs }: HomeClientProps) {
                     max-content et débordent à police agrandie. */}
                 <a
                   href="#profs"
-                  className="min-w-0 flex-1 md:flex-none inline-flex items-center justify-center border-2 border-transparent px-4 md:px-8 h-14 short:!h-9 shortp:!h-9 rounded-pill bg-primary-on-dark text-[#1C1F26] font-semibold font-body text-[0.9375rem] md:text-base text-center md:whitespace-nowrap hover:opacity-90 transition-opacity shadow-lg"
+                  className="min-w-0 flex-1 md:flex-none inline-flex items-center justify-center border-2 border-transparent px-4 md:px-8 h-14 short:!h-9 shortp:!h-9 rounded-pill bg-primary-on-dark text-primary-foreground font-semibold font-body text-[0.9375rem] md:text-base text-center md:whitespace-nowrap hover:opacity-90 transition-opacity shadow-lg"
                 >
                   Voir profs
                 </a>
                 <a
                   href="/devenir-prof"
-                  className="min-w-0 flex-1 md:flex-none inline-flex items-center justify-center px-4 md:px-8 h-14 short:!h-9 shortp:!h-9 rounded-pill border-2 border-primary-on-dark text-primary-on-dark font-semibold font-body text-[0.9375rem] md:text-base text-center md:whitespace-nowrap hover:bg-primary-on-dark hover:text-[#1C1F26] transition-colors"
+                  className="min-w-0 flex-1 md:flex-none inline-flex items-center justify-center px-4 md:px-8 h-14 short:!h-9 shortp:!h-9 rounded-pill border-2 border-primary-on-dark text-primary-on-dark font-semibold font-body text-[0.9375rem] md:text-base text-center md:whitespace-nowrap hover:bg-primary-on-dark hover:text-primary-foreground transition-colors"
                 >
                   Devenir prof
                 </a>
@@ -280,7 +280,7 @@ export default function HomeClient({ initialProfs }: HomeClientProps) {
                     boutons de connexion/inscription). */}
                 <button
                   type="submit"
-                  className="shrink-0 rounded-pill bg-primary-on-dark px-6 py-3 text-[#1C1F26] font-semibold transition hover:opacity-90"
+                  className="shrink-0 rounded-pill bg-primary-on-dark px-6 py-3 text-primary-foreground font-semibold transition hover:opacity-90"
                 >
                   OK
                 </button>

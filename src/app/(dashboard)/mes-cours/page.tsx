@@ -45,7 +45,7 @@ async function MesCoursContent({ searchParams }: PageProps) {
               `<button>`, jamais un lien de navigation). */}
           <a
             href="/#profs"
-            className="inline-flex h-11 items-center justify-center rounded-full border-2 border-transparent bg-primary-on-dark px-6 font-semibold text-[#1C1F26] hover:bg-primary-on-dark/90"
+            className="inline-flex h-11 items-center justify-center rounded-full border-2 border-transparent bg-primary-on-dark px-6 font-semibold text-primary-foreground hover:bg-primary-on-dark/90"
           >
             Voir les profs
           </a>
@@ -119,7 +119,7 @@ async function MesCoursContent({ searchParams }: PageProps) {
 
   // Si non authentifié : afficher CTA login au lieu de redirect (EX-007 : parcours fluide), en
   // gardant le contexte du prof (B28-1) — mêmes classes de bouton que la fiche
-  // (`rounded-pill bg-primary-on-dark ... text-[#1C1F26] shadow-lg`, B28-3) plutôt que le couple
+  // (`rounded-pill bg-primary-on-dark ... text-primary-foreground shadow-lg`, B28-3) plutôt que le couple
   // `bg-primary`/`text-primary-on-dark-foreground` (jeton jamais enregistré, ne générait aucun CSS —
   // même défaut que B26-1), et une sortie explicite vers la fiche plutôt qu'une carte sans issue.
   if (!user) {
@@ -168,7 +168,7 @@ async function MesCoursContent({ searchParams }: PageProps) {
                   px-8 déjà en place), border-2 border-transparent. */}
               <a
                 href={`/login?next=${encodeURIComponent(`/mes-cours?prof=${prof.id}`)}`}
-                className="inline-flex h-14 items-center justify-center rounded-pill border-2 border-transparent bg-primary-on-dark px-8 font-semibold text-[#1C1F26] shadow-lg transition hover:opacity-90"
+                className="inline-flex h-14 items-center justify-center rounded-pill border-2 border-transparent bg-primary-on-dark px-8 font-semibold text-primary-foreground shadow-lg transition hover:opacity-90"
               >
                 Se connecter / S'inscrire
               </a>

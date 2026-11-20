@@ -34,7 +34,7 @@ export default function NotFound() {
       </div>
       <a
         href="/#profs"
-        className="rounded-pill bg-primary-on-dark px-6 py-3 font-semibold font-body text-[#1C1F26] shadow-lg transition hover:opacity-90"
+        className="rounded-pill bg-primary-on-dark px-6 py-3 font-semibold font-body text-primary-foreground shadow-lg transition hover:opacity-90"
       >
         Voir les profs
       </a>

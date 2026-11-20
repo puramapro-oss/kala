@@ -1,3 +1,4 @@
+import { kalaConfig } from '../../app.config';
 import type { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
@@ -8,8 +9,8 @@ export default function manifest(): MetadataRoute.Manifest {
       'Trouvez un prof vérifié pour vos cours de musique et de loisirs à domicile. Transparence totale, 0 % de commission prof.',
     start_url: '/',
     display: 'standalone',
-    background_color: '#1C1F26',
-    theme_color: '#1C1F26',
+    background_color: kalaConfig.identitySeed.colors.pupitre,
+    theme_color: kalaConfig.identitySeed.colors.pupitre,
     icons: [
       { src: '/icon.svg', sizes: 'any', type: 'image/svg+xml' },
       { src: '/apple-icon', sizes: '180x180', type: 'image/png', purpose: 'maskable' },

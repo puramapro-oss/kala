@@ -1,3 +1,4 @@
+import { kalaConfig } from '../../app.config';
 import { Syne, Work_Sans, Anonymous_Pro } from 'next/font/google';
 import './globals.css';
 import Header from '@/components/layout/Header';
@@ -52,7 +53,7 @@ export const metadata = {
 };
 
 export const viewport = {
-  themeColor: '#1C1F26',
+  themeColor: kalaConfig.identitySeed.colors.pupitre,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

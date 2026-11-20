@@ -75,19 +75,17 @@ test.describe('KALA — Parcours public complet', () => {
   test('EX-028/029/030 — Formulaire de réservation (ou porte auth) derrière /mes-cours?prof=', async ({ page }) => {
     await page.goto(`${BASE_URL}/mes-cours?prof=${PROF_SEED_ID}`);
 
-    // Vérifier que la page charge
-    await expect(page.locator('form,main')).toBeVisible({ timeout: 5000 });
-
-    // Sans session : porte d'auth avec CTA vers /login?next=/mes-cours?prof=
-    const porteAuth = page.locator('a[href*="/login?next="]');
-    if (await porteAuth.first().isVisible({ timeout: 2000 })) {
-      // Parcours anonyme : le CTA mène bien vers la connexion avec retour au formulaire
-      await expect(porteAuth.first()).toHaveAttribute('href', /\/login\?next=/);
+    const porteAuth = page.getByRole('link', { name: "Se connecter / S'inscrire" });
+    const instrument = page.locator('#instrument');
+    await expect(porteAuth.or(instrument).first()).toBeVisible();
+    if (await porteAuth.isVisible()) {
+      const retour = encodeURIComponent(`/mes-cours?prof=${PROF_SEED_ID}`);
+      await expect(porteAuth).toHaveAttribute('href', `/login?next=${retour}`);
       return;
     }
 
     // Avec session : champs clés du cours (instrument, niveau, domicile de l'élève)
-    await expect(page.locator('#instrument')).toBeVisible({ timeout: 5000 });
+    await expect(instrument).toBeVisible();
     await expect(page.locator('#niveau')).toBeVisible();
     await expect(page.locator('#adresse-eleve')).toBeVisible();
 

@@ -125,7 +125,7 @@ export default async function GainsPage() {
             </p>
             <a
               href="/devenir-prof"
-              className="inline-flex min-h-11 items-center justify-center px-6 py-3 rounded-full bg-primary-on-dark text-[#1C1F26] font-semibold hover:opacity-90 transition-opacity"
+              className="inline-flex min-h-11 items-center justify-center px-6 py-3 rounded-full bg-primary-on-dark text-primary-foreground font-semibold hover:opacity-90 transition-opacity"
             >
               Devenir prof
             </a>

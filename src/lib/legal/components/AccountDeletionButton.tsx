@@ -81,7 +81,7 @@ export default function AccountDeletionButton({
       <input
         value={typed}
         onChange={(e) => setTyped(e.target.value)}
-        className="min-h-11 w-full rounded-md border border-border bg-transparent px-3"
+        className="min-h-11 w-full rounded-sm border border-border bg-transparent px-3"
         placeholder={CONFIRM_WORD}
       />
       <div className="flex gap-3">

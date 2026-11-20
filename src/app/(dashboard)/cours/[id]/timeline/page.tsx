@@ -568,7 +568,7 @@ function EntreeTimelineCard({ entry, auteurPrenom }: { entry: EntreeTimeline; au
             // (ombre du panier + empreintes basses amputées). Plafond posé sur la LARGEUR au lieu de
             // la hauteur : `max-w-[672px]` (672/1,6=420 exactement) plafonne la hauteur à 420px SANS
             // jamais rogner, quelle que soit la largeur de colonne disponible.
-            <div className="mb-2 w-full max-w-[672px] overflow-hidden rounded-2xl aspect-[16/10]">
+            <div className="mb-2 w-full max-w-[672px] overflow-hidden rounded-lg aspect-[16/10]">
               <img
                 src={photo_path}
                 alt={message || `${titre} du cours`}

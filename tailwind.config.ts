@@ -6,6 +6,7 @@ const config: Config = {
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/lib/legal/components/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
     extend: {
@@ -62,7 +63,7 @@ const config: Config = {
         // aucun CSS, laissant les champs login/signup retomber sur le gris par défaut de Tailwind
         // (rgb(229,231,235)) au lieu de la bordure de marque.
         'glass-border': 'var(--glass-border)',
-        'primary-foreground': '#1C1F26', // laiton est CLAIR : le texte sur primary est pupitre, pas blanc
+        'primary-foreground': 'var(--background)', // laiton est CLAIR : le texte sur primary est pupitre, pas blanc
       },
       borderRadius: {
         sm: 'var(--radius-sm)',
