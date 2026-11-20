@@ -43,19 +43,20 @@ function emailShell({
 export async function sendCoursTermineEmail(
   to: string,
   profPrenom: string,
-  montantCents: number
-) {
+  montantCents: number,
+  idempotencyKey?: string
+): Promise<string | null> {
   const formatted = formatPrice(montantCents);
 
   // SPF/DKIM/DMARC kala.purama.dev non configuré à ce stade (D-024, D-022 SPEC.md).
   // L'envoi sera tenté, mais peut échouer → log serveur clair si échec.
   try {
-    await getResend().emails.send({
+    const { data, error } = await getResend().emails.send({
       from: FROM,
       to,
       subject: `Cours terminé : ${formatted} reçus !`,
       html: emailShell({
-        title: `Félicitations ${profPrenom} !`,
+        title: `Félicitations ${profPrenom.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')} !`,
         bodyHtml: `<p style="line-height: 1.8; color: rgba(245,245,250,0.7);">
           Le cours vient de se terminer.<br>
           Tu as reçu <strong>${formatted}</strong> sur ton compte Stripe Connect.<br><br>
@@ -64,16 +65,10 @@ export async function sendCoursTermineEmail(
         cta: { href: `${APP_URL}/gains`, label: 'Voir mes gains', color: '#6B7F6A' },
         footnote: `<p style="font-size:12px; color:#8A8A99;">Détail des versements visible dans ton espace Gains.<br>${APP_NAME}</p>`,
       }),
-    });
-
-    console.log(`[resend] Email cours terminé envoyé à ${to} (${formatted})`);
-  } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : String(err);
-    console.error(
-      `[resend] Échec envoi email cours terminé (${to}, ${formatted}). Cause probable : SPF/DKIM kala.purama.dev non configuré (cf D-024/D-022 SPEC.md). Erreur:`,
-      message
-    );
-    // NE PAS throw : l'échec d'email ne doit pas bloquer la clôture du cours.
+    }, idempotencyKey ? { idempotencyKey } : undefined);
+    return error ? null : data?.id ?? null;
+  } catch {
+    return null;
   }
 }
 

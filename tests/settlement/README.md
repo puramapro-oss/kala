@@ -1,0 +1,9 @@
+# Règlements des cours KALA
+
+`python3 tests/settlement/postgres.py` démarre un PostgreSQL jetable sur la boucle locale, applique les migrations du dépôt et exécute le handler avec les SDK Stripe et Resend simulés. Le test nécessite Node avec les dépendances verrouillées, PostgreSQL avec `btree_gist`, Python 3 et `psql`. `PG_BIN` et `PSQL` permettent de sélectionner les binaires installés. Les utilisateurs de test, leur mot de passe et les événements sont créés pour chaque exécution.
+
+Le journal `purama_marketplace.kala_reglements` est identifié par la réservation. Ses reçus de transfert, versement et courriel, sa phase et son observation permettent de suivre une livraison interrompue. Une demande dont la réponse a été perdue conserve son titulaire et exige la vérification du reçu auprès du fournisseur. Le délai de cinq minutes signale une demande ancienne. Il n’autorise aucune reprise de l’appel externe. Un refus définitif de l’instantané enregistre d’abord le choix du versement standard.
+
+Les règlements antérieurs à la migration dont les écritures sont ambiguës portent l’observation `legacy_settlement_review`. Le solde et tous les mouvements historiques sont conservés. La route rapproche les avis de paiement EUR et distingue les modes Stripe. Elle conserve le calcul de cashback KALA existant, incluant la déduction forfaitaire de 35 centimes sur les frais de service. Le journal garde la réponse de création du versement ; sa livraison bancaire finale dépend du fournisseur.
+
+Les crédits de cours et les retraits KALA passent par le client serveur `service_role`. Une garde sur les écritures de solde et de mouvements vérifie le rôle SQL ayant appelé les anciennes fonctions du portefeuille. Les droits de lecture des profils et les signatures partagées restent compatibles.

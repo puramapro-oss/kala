@@ -82,21 +82,25 @@ export async function transferToProf(params: {
   return transfer;
 }
 
-/**
- * Déclenche un payout SEPA instantané si supporté, sinon standard.
- * Retourne le Payout créé.
- */
+const definitiveInstantPayoutRefusals = new Set([
+  'instant_payouts_unsupported',
+  'instant_payouts_config_disabled',
+  'instant_payouts_limit_exceeded',
+]);
+
+/** Reprend le mode enregistré pour la réservation et conserve sa clé Stripe. */
 export async function createPayout(params: {
   amountCents: number;
   accountId: string;
   reservationId: string;
+  method?: 'instant' | 'standard';
+  onStandardFallback?: () => Promise<void>;
 }): Promise<Stripe.Payout> {
-  // Tente instantané, fallback standard si non supporté
-  const payout = await stripe.payouts.create(
+  const create = (method: 'instant' | 'standard') => stripe.payouts.create(
     {
       amount: params.amountCents,
       currency: CURRENCY,
-      method: 'instant',
+      method,
       metadata: {
         app_id: APP_ID,
         reservation_id: params.reservationId,
@@ -104,26 +108,25 @@ export async function createPayout(params: {
     },
     {
       stripeAccount: params.accountId,
+      idempotencyKey: `${APP_ID}:payout:${params.reservationId}:${method}`,
     }
-  ).catch(async () => {
-    // Fallback standard si instant échoue
-    return stripe.payouts.create(
-      {
-        amount: params.amountCents,
-        currency: CURRENCY,
-        method: 'standard',
-        metadata: {
-          app_id: APP_ID,
-          reservation_id: params.reservationId,
-        },
-      },
-      {
-        stripeAccount: params.accountId,
-      }
-    );
-  });
+  );
 
-  return payout;
+  if (params.method === 'standard') return create('standard');
+  try {
+    return await create('instant');
+  } catch (error) {
+    // Une réponse perdue peut correspondre à un versement déjà créé.
+    const rejection = error instanceof Stripe.errors.StripeInvalidRequestError
+      || error instanceof Stripe.errors.StripePermissionError
+      || error instanceof Stripe.errors.StripeCardError;
+    if (!rejection || !error.statusCode || ![400, 402, 403, 422].includes(error.statusCode)
+      || !definitiveInstantPayoutRefusals.has(error.code ?? '')) {
+      throw error;
+    }
+    await params.onStandardFallback?.();
+    return create('standard');
+  }
 }
 
 /**
