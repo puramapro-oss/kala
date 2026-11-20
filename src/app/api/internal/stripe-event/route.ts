@@ -1,309 +1,256 @@
-/**
- * POST /api/internal/stripe-event — Handler webhook Stripe INTERNE (EX-041, EX-042, EX-047, EX-048)
- * Reçoit événements DÉJÀ vérifiés relayés par dispatcher karma (HMAC, pas `constructEvent` ici).
- * Idempotence event_id (EX-042), transfert prof + split karma à clôture (EX-035, EX-036, EX-048).
- * Journalise mouvements_argent (EX-047).
- */
-
-import { NextRequest, NextResponse } from 'next/server';
-import { createServiceClient } from '@/lib/supabase-server';
+import { createHmac, randomUUID, timingSafeEqual } from 'node:crypto';
+import { NextResponse } from 'next/server';
+import { z } from 'zod';
 import { APP_ID } from '@/lib/constants';
-import { transferToProf, createPayout } from '@/lib/stripe';
 import { splitRevenue } from '@/lib/karma';
 import { sendCoursTermineEmail } from '@/lib/resend';
-import { z } from 'zod';
-import type { Database } from '@/types/database';
+import { createPayout, transferToProf } from '@/lib/stripe';
+import { createServiceClient } from '@/lib/supabase-server';
 
-// Valeur d'enum PostgreSQL partagée du schéma `purama_marketplace` (migration 0001,
-// read-only) — composée par concaténation pour ne pas renommer le vocabulaire historique
-// de la base (même patron que verification-prof.ts).
-type CategorieMouvement = NonNullable<
-  Database['purama_marketplace']['Tables']['mouvements_argent']['Insert']['categorie']
->;
-const CATEGORIE_TRANSFERT_PRESTATAIRE = ('transfert_' + 'gard' + 'ien') as CategorieMouvement;
-
-// Schema minimal événement Stripe (pré-vérifié par dispatcher karma)
-const StripeEventSchema = z.object({
-  id: z.string(),
-  type: z.string(),
-  data: z.object({
-    object: z.unknown(), // Stripe.PaymentIntent | Transfer | etc.
+const reference = z.string().min(1).max(255);
+const cents = z.number().int().nonnegative().max(2_147_483_647);
+const envelope = z.object({
+  id: reference,
+  type: reference,
+  livemode: z.boolean().optional(),
+  account: reference.optional(),
+  data: z.object({ object: z.unknown() }),
+});
+const payment = z.object({
+  id: reference,
+  amount: cents,
+  amount_received: cents,
+  currency: z.string(),
+  livemode: z.boolean(),
+  metadata: z.object({
+    reservation_id: z.string().uuid(),
+    app_id: z.string().optional(),
+    user_id: z.string().uuid().optional(),
+    prof_account_id: reference.optional(),
   }),
 });
+const plan = z.discriminatedUnion('action', [
+  z.object({ action: z.literal('transfer'), account: reference, amount: cents.positive() }),
+  z.object({
+    action: z.literal('payout'),
+    account: reference,
+    amount: cents.positive(),
+    method: z.enum(['instant', 'standard']),
+  }),
+  z.object({ action: z.literal('cashback'), fees: cents }),
+  z.object({
+    action: z.literal('email'),
+    email: z.string().email(),
+    name: z.string(),
+    amount: cents.positive(),
+  }),
+  z.object({ action: z.literal('review'), reason: reference }),
+  z.object({ action: z.literal('continue') }),
+  z.object({ action: z.literal('busy') }),
+  z.object({ action: z.literal('done') }),
+]);
+type Details = Record<string, string | number | boolean | null>;
+type RpcClient = {
+  rpc(name: string, args: Record<string, unknown>): PromiseLike<{ data: unknown; error: unknown }>;
+};
 
-/**
- * Marque event_id traité en base (idempotence EX-042).
- * Retourne true si déjà traité (skip), false sinon (continuer).
- */
-async function checkEventIdempotence(eventId: string): Promise<boolean> {
-  const supabase = createServiceClient();
-
-  const { data: existing, error } = await supabase
-    .from('stripe_events')
-    .select('id')
-    .eq('app_id', APP_ID)
-    .eq('event_id', eventId)
-    .limit(1)
-    .maybeSingle();
-
-  if (error) {
-    console.error('[stripe-event] Erreur vérif idempotence:', error);
-    throw error;
-  }
-
-  return !!existing; // true = déjà traité
+async function rpc(db: RpcClient, name: string, args: Record<string, unknown>) {
+  const { data, error } = await db.rpc(name, args);
+  if (error) throw new Error('settlement_database_unavailable');
+  return data;
 }
 
-/**
- * Marque event_id traité APRÈS succès (EX-042).
- */
-async function markEventProcessed(eventId: string, eventType: string): Promise<void> {
-  const supabase = createServiceClient();
-
-  const { error } = await supabase.from('stripe_events').insert({
-    app_id: APP_ID,
-    event_id: eventId,
-    event_type: eventType,
-    traite_le: new Date().toISOString(),
-  });
-
-  if (error) {
-    console.error('[stripe-event] Erreur mark processed:', error);
-    throw error;
-  }
-}
-
-/**
- * Journalise mouvement argent (EX-047).
- */
-async function logMouvement(params: {
-  reservationId: string;
-  categorie: CategorieMouvement;
-  montantCents: number;
-  stripe_id?: string;
-}): Promise<void> {
-  const supabase = createServiceClient();
-
-  const { error } = await supabase.from('mouvements_argent').insert({
-    app_id: APP_ID,
-    reservation_id: params.reservationId,
-    categorie: params.categorie,
-    montant_cents: params.montantCents,
-    stripe_id: params.stripe_id || null,
-    cree_le: new Date().toISOString(),
-  });
-
-  if (error) {
-    console.error('[stripe-event] Erreur log mouvement:', error);
-    throw error;
-  }
-}
-
-/**
- * Gère passage réservation → terminee : transfert prof + split karma + payout (EX-035, EX-036, EX-048).
- */
-async function handleReservationTerminee(reservationId: string): Promise<void> {
-  const supabase = createServiceClient();
-
-  // Lecture réservation
-  const { data: res, error: resErr } = await supabase
-    .from('reservations')
-    .select('id, tarif_cents, frais_service_cents, total_cents, prestataire_id')
-    .eq('app_id', APP_ID)
-    .eq('id', reservationId)
-    .single();
-
-  if (resErr || !res) {
-    throw new Error(`Réservation ${reservationId} introuvable`);
-  }
-
-  // Prof account_id
-  const { data: prest, error: prestErr } = await supabase
-    .from('prestataires')
-    .select('stripe_account_id')
-    .eq('app_id', APP_ID)
-    .eq('id', res.prestataire_id)
-    .single();
-
-  if (prestErr || !prest || !prest.stripe_account_id) {
-    throw new Error(`Prestataire ${res.prestataire_id} sans Stripe Connect`);
-  }
-
-  // Transfer 100% tarif prof (EX-035)
-  const transfer = await transferToProf({
-    tarifCents: res.tarif_cents,
-    profAccountId: prest.stripe_account_id,
-    reservationId: res.id,
-  });
-
-  await logMouvement({
-    reservationId: res.id,
-    categorie: CATEGORIE_TRANSFERT_PRESTATAIRE,
-    montantCents: res.tarif_cents,
-    stripe_id: transfer.id,
-  });
-
-  // Payout SEPA (EX-036, < 60s trigger)
-  const payout = await createPayout({
-    amountCents: res.tarif_cents,
-    accountId: prest.stripe_account_id,
-    reservationId: res.id,
-  });
-
-  console.log(
-    `[stripe-event] Payout déclenché : ${payout.id}, methode: ${payout.method}, arrivée: ${payout.arrival_date}`
-  );
-
-  // Split KARMA sur revenu frais de service (EX-048, EX-087)
-  // Hypothèse simplifiée V1 : revenu net = frais_service - (frais Stripe ~0,35€)
-  // En prod, calculer depuis Stripe Balance Transaction réel
-  const revenuNetEuros = res.frais_service_cents / 100 - 0.35; // approximation
-  if (revenuNetEuros > 0) {
-    const split = splitRevenue(revenuNetEuros);
-
-    // Log chaque part (pour réconciliation future BK-024)
-    console.log(`[stripe-event] Split karma : users=${split.partUsers}€, asso=${split.partAsso}€, sasu=${split.partSASU}€`);
-
-    // EX-087 : créditer wallet client (50% users du split KARMA)
-    const montantCashbackCents = Math.round(split.partUsers * 100);
-    if (montantCashbackCents > 0) {
-      const { error: creditErr } = await supabase.rpc('credit_wallet', {
-        p_app_id: APP_ID,
-        p_profil_id: res.client_profil_id,
-        p_montant_cents: montantCashbackCents,
-        p_categorie: 'cashback_karma',
-        p_reservation_id: res.id,
-        p_description: `Cashback KARMA cours #${res.id.substring(0, 8)}`,
-      });
-
-      if (creditErr) {
-        console.error('[stripe-event] Erreur crédit wallet client:', creditErr);
-        throw creditErr;
-      }
-
-      console.log(`[stripe-event] Wallet client crédité : +${split.partUsers.toFixed(2)}€`);
-    }
-  }
-
-  // T-56 EX-038 : notification email prof "Cours terminé : +X€ reçus"
-  const { data: prestProfile } = await supabase
-    .from('profils')
-    .select('email, prenom')
-    .eq('app_id', APP_ID)
-    .eq('user_id', (await supabase.from('prestataires').select('user_id').eq('id', res.prestataire_id).single()).data?.user_id!)
-    .maybeSingle();
-
-  if (prestProfile?.email) {
-    await sendCoursTermineEmail(prestProfile.email, prestProfile.prenom || 'Prof', res.tarif_cents);
-  }
-
-  console.log(`[stripe-event] Réservation ${reservationId} clôturée : transfer+payout OK`);
-}
-
-export async function POST(req: NextRequest) {
-  try {
-    // Vérification signature dispatcher karma (timing-safe, CONTRAT-WEBHOOK-KARMA.md)
-    const signature = req.headers.get('X-Karma-Signature');
-    const secret = process.env.KARMA_SHARED_SECRET;
-
-    if (!signature || !secret) {
-      console.error('[stripe-event] Tentative spoofing : signature webhook manquante');
-      return NextResponse.json({ error: 'Non autorisé (signature webhook manquante)' }, { status: 401 });
-    }
-
-    const bodyText = await req.text();
-    const crypto = await import('crypto');
-    const expectedSig = crypto.createHmac('sha256', secret).update(bodyText).digest('hex');
-
-    // Comparaison timing-safe (buffers doivent avoir même longueur)
-    const sigBuffer = Buffer.from(signature, 'utf-8');
-    const expectedBuffer = Buffer.from(expectedSig, 'utf-8');
-
-    if (sigBuffer.length !== expectedBuffer.length || !crypto.timingSafeEqual(sigBuffer, expectedBuffer)) {
-      console.error('[stripe-event] Tentative spoofing : signature webhook invalide', {
-        reçue: signature.substring(0, 16) + '...',
-        attendue: expectedSig.substring(0, 16) + '...',
-      });
-      return NextResponse.json({ error: 'Signature webhook invalide' }, { status: 403 });
-    }
-
-    // Parsing après vérification de sécurité
-    const parsed = StripeEventSchema.safeParse(JSON.parse(bodyText));
-
-    if (!parsed.success) {
-      return NextResponse.json(
-        { error: 'Événement Stripe invalide', details: parsed.error.issues },
-        { status: 400 }
-      );
-    }
-
-    const event = parsed.data;
-
-    // Vérif idempotence (EX-042)
-    const alreadyProcessed = await checkEventIdempotence(event.id);
-    if (alreadyProcessed) {
-      console.log(`[stripe-event] Événement ${event.id} déjà traité (skip)`);
-      return NextResponse.json({ skipped: true, reason: 'Déjà traité' }, { status: 200 });
-    }
-
-    // Routage par type événement
-    switch (event.type) {
-      case 'payment_intent.succeeded': {
-        const pi = event.data.object as {
-          id: string;
-          amount: number;
-          metadata?: { reservation_id?: string };
-        };
-        const reservationId = pi.metadata?.reservation_id;
-
-        if (!reservationId) {
-          console.warn('[stripe-event] payment_intent.succeeded sans reservation_id metadata');
-          break;
-        }
-
-        // Log charge client
-        await logMouvement({
-          reservationId,
-          categorie: 'charge_client',
-          montantCents: pi.amount,
-          stripe_id: pi.id,
-        });
-
-        // Passage statut confirmee (paiement validé)
-        const supabase = createServiceClient();
-        await supabase
-          .from('reservations')
-          .update({ statut: 'confirmee' as const })
-          .eq('app_id', APP_ID)
-          .eq('id', reservationId);
-
-        console.log(`[stripe-event] Réservation ${reservationId} confirmée (paiement OK)`);
-        break;
-      }
-
-      case 'reservation.terminee': {
-        // Événement custom déclenché par cron/admin (pas Stripe natif)
-        const reservationId = (event.data.object as { id?: string })?.id;
-        if (reservationId) {
-          await handleReservationTerminee(reservationId);
-        }
-        break;
-      }
-
-      default:
-        console.log(`[stripe-event] Type ${event.type} non géré (skip)`);
-    }
-
-    // Marque event_id traité APRÈS succès (EX-042)
-    await markEventProcessed(event.id, event.type);
-
-    return NextResponse.json({ success: true, eventId: event.id }, { status: 200 });
-  } catch (err: unknown) {
-    console.error('[stripe-event] Erreur:', err);
-    const message = err instanceof Error ? err.message : String(err);
-    return NextResponse.json(
-      { error: 'Erreur traitement événement Stripe', details: message },
-      { status: 500 }
+async function settle(db: RpcClient, reservationId: string, live: boolean): Promise<string> {
+  let owner = randomUUID();
+  const advance = async (action: string, receipt?: string, amount?: number) =>
+    plan.parse(
+      await rpc(db, 'kala_avancer_reglement', {
+        p_reservation: reservationId,
+        p_action: action,
+        p_titulaire: owner,
+        p_reference: receipt ?? null,
+        p_cents: amount ?? null,
+      }),
     );
+  for (let step = 0; step < 8; step++) {
+    const work = await advance('next');
+    if (work.action === 'done' || work.action === 'busy') return work.action;
+    if (work.action === 'review') return work.reason;
+    if (work.action === 'cashback') {
+      // Existing course fee calculation, in cents. The course tariff is never split.
+      const net = Math.max(work.fees - 35, 0) / 100;
+      const credit = await advance('cashback', undefined, Math.round(splitRevenue(net).partUsers * 100));
+      if (credit.action === 'review') return credit.reason;
+      continue;
+    }
+    if (work.action === 'continue') throw new Error('unexpected_settlement_plan');
+    let receipt: string;
+    try {
+      if (work.action === 'transfer') {
+        const result = await transferToProf({
+          reservationId,
+          profAccountId: work.account,
+          tarifCents: work.amount,
+        });
+        const destination =
+          typeof result.destination === 'string' ? result.destination : result.destination?.id;
+        if (
+          !result.id ||
+          result.livemode !== live ||
+          result.amount !== work.amount ||
+          result.currency !== 'eur' ||
+          destination !== work.account ||
+          result.transfer_group !== reservationId ||
+          result.reversed ||
+          result.amount_reversed !== 0
+        )
+          throw new Error('transfer_receipt_mismatch');
+        receipt = result.id;
+      } else if (work.action === 'payout') {
+        let method = work.method;
+        const result = await createPayout({
+          reservationId,
+          accountId: work.account,
+          amountCents: work.amount,
+          method,
+          onStandardFallback: async () => {
+            const decision = await advance('standard_allowed');
+            if (decision.action !== 'continue') throw new Error('fallback_decision_unconfirmed');
+            // A crash between these calls leaves a durable, unclaimed standard-only action.
+            owner = randomUUID();
+            const standard = await advance('next');
+            if (
+              standard.action !== 'payout' ||
+              standard.method !== 'standard' ||
+              standard.account !== work.account ||
+              standard.amount !== work.amount
+            ) {
+              throw new Error('standard_action_unavailable');
+            }
+            method = 'standard';
+          },
+        });
+        if (
+          !result.id ||
+          result.livemode !== live ||
+          result.amount !== work.amount ||
+          result.currency !== 'eur' ||
+          result.method !== method ||
+          !['pending', 'in_transit', 'paid'].includes(result.status)
+        )
+          throw new Error('payout_receipt_mismatch');
+        receipt = result.id;
+      } else {
+        const id = await sendCoursTermineEmail(
+          work.email,
+          work.name,
+          work.amount,
+          `kala-cours-termine:${reservationId}`,
+        );
+        if (!id) throw new Error('email_receipt_missing');
+        receipt = id;
+      }
+    } catch {
+      // The request may already have reached the provider. Preserve the claim across deliveries.
+      const uncertain = await advance('uncertain');
+      return uncertain.action === 'review' ? uncertain.reason : 'settlement_pending';
+    }
+    // If this acknowledgement loses its response, a subsequent delivery reads its committed
+    // checkpoint. An unconfirmed in-flight action remains held for reconciliation.
+    const ack = await advance(`${work.action}_receipt`, receipt);
+    if (ack.action === 'review') return ack.reason;
+    if (ack.action !== 'continue' && ack.action !== 'done') return 'settlement_pending';
+  }
+  throw new Error('settlement_incomplete');
+}
+
+export async function POST(req: Request) {
+  const signature = req.headers.get('X-Karma-Signature');
+  const secret = process.env.KARMA_SHARED_SECRET;
+  if (!signature || !secret) return NextResponse.json({ error: 'Signature requise' }, { status: 401 });
+  const raw = await req.text();
+  const expected = createHmac('sha256', secret).update(raw).digest();
+  if (!/^[a-f\d]{64}$/i.test(signature) || !timingSafeEqual(Buffer.from(signature, 'hex'), expected)) {
+    return NextResponse.json({ error: 'Signature invalide' }, { status: 403 });
+  }
+  let body: unknown;
+  try {
+    body = JSON.parse(raw);
+  } catch {
+    return NextResponse.json({ error: 'JSON invalide' }, { status: 400 });
+  }
+  const parsed = envelope.safeParse(body);
+  if (!parsed.success) return NextResponse.json({ error: 'Événement invalide' }, { status: 400 });
+  const event = parsed.data;
+  const ignored = () => NextResponse.json({ success: true, eventId: event.id, skipped: true });
+  if (event.type !== 'payment_intent.succeeded' && event.type !== 'reservation.terminee') return ignored();
+  const keyMode = /^(?:sk|rk)_(test|live)_/.exec(process.env.STRIPE_SECRET_KEY ?? '')?.[1];
+  if (!keyMode) return NextResponse.json({ error: 'Mode Stripe non vérifiable' }, { status: 503 });
+  const live = keyMode === 'live';
+  if (event.account) return ignored(); // KALA creates the charge on its platform account.
+  if (event.livemode !== undefined && event.livemode !== live)
+    return NextResponse.json({ error: 'Mode Stripe différent' }, { status: 409 });
+  let details: Details;
+  if (event.type === 'payment_intent.succeeded') {
+    const target = z
+      .object({
+        metadata: z
+          .object({ app_id: z.string().optional(), reservation_id: z.string().optional() })
+          .nullish(),
+      })
+      .safeParse(event.data.object);
+    if (
+      target.success &&
+      (!target.data.metadata?.reservation_id ||
+        (target.data.metadata.app_id && target.data.metadata.app_id !== APP_ID))
+    )
+      return ignored();
+    const result = payment.safeParse(event.data.object);
+    if (!result.success) return NextResponse.json({ error: 'Paiement invalide' }, { status: 400 });
+    const pi = result.data;
+    if (event.livemode !== live || pi.livemode !== live)
+      return NextResponse.json({ error: 'Mode de paiement non vérifiable' }, { status: 409 });
+    details = {
+      live,
+      reservation_id: pi.metadata.reservation_id,
+      intent: pi.id,
+      amount: pi.amount,
+      received: pi.amount_received,
+      currency: pi.currency,
+      app: pi.metadata.app_id ?? null,
+      user: pi.metadata.user_id ?? null,
+      account: pi.metadata.prof_account_id ?? null,
+    };
+  } else if (event.type === 'reservation.terminee') {
+    const result = z
+      .object({ id: z.string().uuid(), app_id: z.string().optional() })
+      .safeParse(event.data.object);
+    if (!result.success) return NextResponse.json({ error: 'Réservation invalide' }, { status: 400 });
+    if (result.data.app_id && result.data.app_id !== APP_ID) return ignored();
+    details = { live, reservation_id: result.data.id };
+  } else return ignored();
+  try {
+    const db: RpcClient = createServiceClient();
+    const receive = () =>
+      rpc(db, 'kala_recevoir_evenement', { p_id: event.id, p_type: event.type, p_details: details });
+    let status = await receive();
+    if (status === 'processed') return ignored();
+    if (status === 'settle') {
+      status = await settle(db, String(details.reservation_id), live);
+      if (status === 'done') status = await receive();
+    }
+    if (status === 'done' || status === 'processed')
+      return NextResponse.json({ success: true, eventId: event.id });
+    return NextResponse.json(
+      {
+        error: 'Règlement en attente',
+        eventId: event.id,
+        reason: typeof status === 'string' ? status : 'receipt_missing',
+      },
+      { status: 503 },
+    );
+  } catch {
+    console.error('[stripe-event] Confirmation indisponible', event.id);
+    return NextResponse.json({ error: 'Confirmation indisponible', eventId: event.id }, { status: 503 });
   }
 }
