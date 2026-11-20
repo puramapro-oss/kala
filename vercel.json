@@ -4,5 +4,10 @@
       "path": "/api/cron/account-deletion",
       "schedule": "0 3 * * *"
     }
-  ]
+  ],
+  "git": {
+    "deploymentEnabled": {
+      "audit/kala-journal-reglements-20261120": false
+    }
+  }
 }
