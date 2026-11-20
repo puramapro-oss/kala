@@ -14,14 +14,11 @@ describe('splitRevenue', () => {
     expect(result.montantTotal).toBe(10);
   });
 
-  it('répartit 8.65€ (cas réel frais 9% sur garde 100€, net Stripe ~8.65€)', () => {
+  it('répartit 8,65 € et affecte le reliquat à la SASU', () => {
     const result = splitRevenue(8.65);
-    // 50% = 4.325 → arrondi 4.33
-    // 10% = 0.865 → arrondi 0.87
-    // 40% = 3.46 → arrondi 3.46
     expect(result.partUsers).toBe(4.33);
     expect(result.partAsso).toBe(0.87);
-    expect(result.partSASU).toBe(3.46);
+    expect(result.partSASU).toBe(3.45);
   });
 
   it('arrondit chaque part au centime (half-up)', () => {
@@ -42,11 +39,24 @@ describe('splitRevenue', () => {
     expect(() => splitRevenue(-5)).toThrow(/revenu négatif interdit/);
   });
 
-  it('conserve la somme totale dans montantTotal', () => {
-    const result = splitRevenue(123.45);
-    expect(result.montantTotal).toBe(123.45);
-    // Somme parts peut différer légèrement d'un arrondi — ici on vérifie juste la cohérence
-    const somme = result.partUsers + result.partAsso + result.partSASU;
-    expect(somme).toBeCloseTo(123.45, 1); // tolérance 0.1 centime
+  it('conserve chaque centime et chaque part reste positive ou nulle', () => {
+    for (let cents = 0; cents <= 1000; cents++) {
+      const split = splitRevenue(cents / 100);
+      const parts = [split.partUsers, split.partAsso, split.partSASU]
+        .map((part) => Math.round(part * 100));
+      expect(split.montantTotal).toBe(cents / 100);
+      expect(Math.min(...parts)).toBeGreaterThanOrEqual(0);
+      expect(parts[0] + parts[1] + parts[2]).toBe(cents);
+    }
+  });
+
+  it('arrondit les demi-centimes après conversion des frais en centimes', () => {
+    expect(splitRevenue(1.48 - 0.35)).toEqual({
+      montantTotal: 1.13, partUsers: 0.57, partAsso: 0.11, partSASU: 0.45,
+    });
+  });
+
+  it.each([NaN, Infinity, Number.MAX_SAFE_INTEGER])('rejette le montant non représentable %s', (invalid) => {
+    expect(() => splitRevenue(invalid)).toThrow(/non représentable/);
   });
 });
