@@ -46,6 +46,33 @@ CREATE INDEX kala_money_reservation ON purama_marketplace.mouvements_argent (res
 CREATE INDEX kala_wallet_cashback_reservation ON purama_marketplace.wallet_mouvements (reservation_id)
   WHERE app_id = 'kala' AND categorie = 'cashback_karma';
 
+-- 0004 grants writers through shared SECURITY DEFINER functions. Keep those public signatures
+-- and other tenants' grants intact. In PostgREST the selected SQL role remains in the `role`
+-- setting during a SECURITY DEFINER call; a direct database connection uses its session role.
+-- The trigger's own EXECUTE ACL is the sole allowlist for KALA wallet writes.
+CREATE FUNCTION purama_marketplace.kala_garder_ecriture_portefeuille() RETURNS trigger
+LANGUAGE plpgsql SET search_path = '' AS $$
+DECLARE
+  caller name := coalesce(nullif(nullif(current_setting('role', true), 'none'), ''), session_user);
+BEGIN
+  IF NOT has_function_privilege(caller, 'purama_marketplace.kala_garder_ecriture_portefeuille()'::regprocedure, 'EXECUTE') THEN
+    RAISE EXCEPTION 'KALA wallet writes require the service role' USING ERRCODE = '42501';
+  END IF;
+  RETURN NEW;
+END;
+$$;
+REVOKE ALL ON FUNCTION purama_marketplace.kala_garder_ecriture_portefeuille() FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION purama_marketplace.kala_garder_ecriture_portefeuille() TO service_role;
+
+CREATE TRIGGER kala_wallet_insert_writer BEFORE INSERT ON purama_marketplace.wallets
+FOR EACH ROW WHEN (NEW.app_id = 'kala') EXECUTE FUNCTION purama_marketplace.kala_garder_ecriture_portefeuille();
+CREATE TRIGGER kala_wallet_update_writer BEFORE UPDATE ON purama_marketplace.wallets
+FOR EACH ROW WHEN (OLD.app_id = 'kala' OR NEW.app_id = 'kala') EXECUTE FUNCTION purama_marketplace.kala_garder_ecriture_portefeuille();
+CREATE TRIGGER kala_wallet_movement_insert_writer BEFORE INSERT ON purama_marketplace.wallet_mouvements
+FOR EACH ROW WHEN (NEW.app_id = 'kala') EXECUTE FUNCTION purama_marketplace.kala_garder_ecriture_portefeuille();
+CREATE TRIGGER kala_wallet_movement_update_writer BEFORE UPDATE ON purama_marketplace.wallet_mouvements
+FOR EACH ROW WHEN (OLD.app_id = 'kala' OR NEW.app_id = 'kala') EXECUTE FUNCTION purama_marketplace.kala_garder_ecriture_portefeuille();
+
 -- The existing wallet function credits the balance before writing its movement, in the same
 -- transaction. A rejected duplicate therefore rolls back the balance as well. The guard applies
 -- only to KALA cashback, including calls from older code. Existing duplicate rows stay intact.
@@ -55,9 +82,6 @@ REVOKE ALL ON purama_marketplace.kala_cashback_reservations FROM PUBLIC, anon, a
 CREATE OR REPLACE FUNCTION purama_marketplace.kala_garder_cashback() RETURNS trigger
 LANGUAGE plpgsql SECURITY DEFINER SET search_path = '' AS $$
 BEGIN
-  IF session_user IN ('anon', 'authenticated') OR current_setting('role', true) IN ('anon', 'authenticated') THEN
-    RAISE EXCEPTION 'KALA cashback requires a service operation' USING ERRCODE = '42501';
-  END IF;
   IF NEW.reservation_id IS NULL OR NEW.montant_cents <= 0 OR NOT EXISTS (
     SELECT 1 FROM purama_marketplace.reservations r JOIN purama_marketplace.wallets w ON w.id = NEW.wallet_id
     WHERE r.id = NEW.reservation_id AND r.app_id = 'kala' AND r.client_profil_id = NEW.profil_id

@@ -523,3 +523,39 @@ it('réserve les frais inférieurs à la déduction forfaitaire et ne crée pas 
     '0',
   );
 });
+
+it('grants the KALA write gate only to its service role and installs scoped guards on both wallet tables', async () => {
+  const guard = `${schema}.kala_garder_ecriture_portefeuille()`;
+  const privileges =
+    await sql(`SELECT role || ':' || has_function_privilege(role, '${guard}', 'EXECUTE')::text
+    FROM (VALUES ('anon'),('authenticated'),('service_role')) roles(role) ORDER BY role`);
+  expect(privileges.split('\n')).toEqual(['anon:false', 'authenticated:false', 'service_role:true']);
+  const triggers =
+    await sql(`SELECT relname || ':' || tgname FROM pg_trigger t JOIN pg_class c ON c.oid=t.tgrelid
+    WHERE tgfoid='${guard}'::regprocedure AND tgenabled='O' AND tgqual IS NOT NULL AND lower(pg_get_triggerdef(t.oid)) LIKE '%new.app_id%''kala''%' ORDER BY relname,tgname`);
+  expect(triggers.split('\n')).toEqual([
+    'wallet_mouvements:kala_wallet_movement_insert_writer',
+    'wallet_mouvements:kala_wallet_movement_update_writer',
+    'wallets:kala_wallet_insert_writer',
+    'wallets:kala_wallet_update_writer',
+  ]);
+  expect(await sql(`SELECT has_table_privilege('authenticated','${schema}.wallets','SELECT')`)).toBe('t');
+});
+it('keeps the legitimate service-role cashback, withdrawal and insufficient-balance contracts', async () => {
+  const f = await seed();
+  await paid(f);
+  expect((await f.complete()).status).toBe(200);
+  const wallet = await sql(`SELECT id FROM ${schema}.wallets WHERE profil_id='${f.client}'`);
+  const withdrawal = (amount: number) =>
+    sql(
+      `SET ROLE service_role; SELECT ${schema}.debit_wallet('kala','${f.client}',${amount},'retrait','local synthetic withdrawal')`,
+    );
+  expect(await withdrawal(200)).toBe(wallet);
+  expect(await withdrawal(1000)).toBe('');
+  expect(await sql(`SELECT solde_cents FROM ${schema}.wallets WHERE id='${wallet}'`)).toBe('233');
+  expect(
+    await sql(
+      `SELECT categorie || ':' || montant_cents FROM ${schema}.wallet_mouvements WHERE wallet_id='${wallet}' ORDER BY categorie`,
+    ),
+  ).toBe('cashback_karma:433\nretrait:-200');
+});
