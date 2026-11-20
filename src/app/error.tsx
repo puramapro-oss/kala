@@ -17,7 +17,7 @@ export default function Error({ error, reset }: { error: Error; reset: () => voi
       </p>
       <button
         onClick={() => reset()}
-        className="px-4 py-2 bg-primary-on-dark text-[#1C1F26] rounded-lg hover:opacity-90 transition"
+        className="px-4 py-2 bg-primary-on-dark text-primary-foreground rounded-lg hover:opacity-90 transition"
       >
         Réessayer
       </button>

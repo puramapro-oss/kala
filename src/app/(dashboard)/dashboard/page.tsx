@@ -329,14 +329,14 @@ export default async function DashboardPage() {
                   {prochaineCours?.statut === 'en_cours' ? (
                     <a
                       href={`/cours/${prochaineCours.id}/timeline`}
-                      className="inline-flex min-h-11 items-center rounded-pill bg-primary-on-dark px-6 py-3 text-sm font-semibold text-[#1C1F26] shadow-lg transition hover:opacity-90"
+                      className="inline-flex min-h-11 items-center rounded-pill bg-primary-on-dark px-6 py-3 text-sm font-semibold text-primary-foreground shadow-lg transition hover:opacity-90"
                     >
                       Voir la timeline
                     </a>
                   ) : (
                     <a
                       href="/#profs"
-                      className="inline-flex min-h-11 items-center rounded-pill bg-primary-on-dark px-6 py-3 text-sm font-semibold text-[#1C1F26] shadow-lg transition hover:opacity-90"
+                      className="inline-flex min-h-11 items-center rounded-pill bg-primary-on-dark px-6 py-3 text-sm font-semibold text-primary-foreground shadow-lg transition hover:opacity-90"
                     >
                       Trouver un prof
                     </a>
