@@ -42,11 +42,13 @@ with tempfile.TemporaryDirectory(prefix='kala-pg-') as tmp:
         assert sql('SHOW data_directory') == str(data) and sql('SHOW listen_addresses') == '127.0.0.1'
         print('PostgreSQL', sql('SHOW server_version'), flush=True)
         sql('CREATE ROLE anon; CREATE ROLE authenticated; CREATE ROLE service_role BYPASSRLS; CREATE SCHEMA auth; CREATE SCHEMA extensions; '
-            'CREATE TABLE auth.users(id uuid PRIMARY KEY,email text); CREATE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql STABLE AS $$SELECT NULL::uuid$$;')
+            "CREATE TABLE auth.users(id uuid PRIMARY KEY,email text); CREATE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql STABLE "
+            "AS $$SELECT (nullif(current_setting('request.jwt.claims', true), '')::jsonb ->> 'sub')::uuid$$;")
         for migration in sorted((ROOT / 'migrations').glob('*.sql')):
             if migration.name == '0009_kala_reglements.sql':
                 run([psql, '-Xq', '-v', 'ON_ERROR_STOP=1', '-f', str(ROOT / 'tests/settlement/legacy-fixture.sql')], stdout=subprocess.DEVNULL)
             run([psql, '-Xq', '-v', 'ON_ERROR_STOP=1', '-f', str(migration)], stdout=subprocess.DEVNULL)
+        run([psql, '-Xq', '-v', 'ON_ERROR_STOP=1', '-f', str(ROOT / 'tests/settlement/reservations-access.sql')])
         run([node, 'node_modules/vitest/vitest.mjs', 'run', '--config', 'tests/settlement/vitest.config.mts'], timeout=150)
     finally:
         run([str(pg_bin / 'pg_ctl'), '-w', '-t', '20', '-m', 'fast', '-D', str(data), 'stop'], stdout=subprocess.DEVNULL)

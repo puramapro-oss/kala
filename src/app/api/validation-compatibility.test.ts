@@ -132,7 +132,7 @@ describe('validation des réservations et du paiement', () => {
   });
   it.each(['domicile', 'visite'])('conserve les dates UTC, les centimes et le cours %s', async typeGarde => {
     expect((await reserve(request({ ...reservation, typeGarde }))).status).toBe(404);
-    expect(mocks.from.mock.calls.map(call => call[0])).toEqual(['reservations', 'profils']);
+    expect(mocks.from).toHaveBeenCalledExactlyOnceWith('profils');
   });
   it.each(['invalide', null, '287be215-61ff-498c-0bc5-b7a9fa72cc79'])('refuse le checkout avec UUID %s', async reservationId => {
     await invalid(checkout, { reservationId }, 'reservationId');
