@@ -7,7 +7,8 @@
   ],
   "git": {
     "deploymentEnabled": {
-      "audit/kala-journal-reglements-20261120": false
+      "audit/kala-journal-reglements-20261120": false,
+      "fix/kala-dependency-security-20261122": false
     }
   }
 }

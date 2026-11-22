@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
 
     if (!validation.success) {
       return NextResponse.json(
-        { error: validation.error.errors[0]?.message || 'Montant invalide' },
+        { error: validation.error.issues[0]?.message || 'Montant invalide' },
         { status: 400 }
       );
     }

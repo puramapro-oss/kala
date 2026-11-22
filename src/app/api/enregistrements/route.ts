@@ -150,7 +150,7 @@ export async function POST(req: NextRequest) {
 
     if (!parsed.success) {
       return NextResponse.json(
-        { error: 'Données invalides', details: parsed.error.errors },
+        { error: 'Données invalides', details: parsed.error.issues },
         { status: 400 }
       );
     }
